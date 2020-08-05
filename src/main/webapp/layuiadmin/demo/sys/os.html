@@ -1,0 +1,174 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>layuiAdmin 网站用户</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link rel="stylesheet" href="/layuiadmin/layui/css/layui.css"
+	media="all">
+<link rel="stylesheet" href="/layuiadmin/style/admin.css" media="all">
+<link rel="stylesheet" href="/layuiadmin/style/eleTree.css" media="all">
+<style type="text/css">
+.layui-table-body {
+	overflow-x: hidden;
+}
+
+.inner{
+    width: 265px;
+    height: 400px;
+    position: absolute;
+    top: 33px;
+    left: 13px;
+    /*cursor: pointer;*/
+    overflow:hidden;
+}
+.innerbox{
+    overflow-x: hidden;
+    overflow-y: auto;
+    color: #000;
+    font-size: .7rem;
+    font-family: "\5FAE\8F6F\96C5\9ED1",Helvetica,"黑体",Arial,Tahoma;
+    height: 100%;
+}
+/*滚动条样式*/
+.innerbox::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 4px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 4px;
+}
+.innerbox::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.2);
+}
+.innerbox::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 0;
+    background: rgba(0,0,0,0.1);
+}
+</style>
+</head>
+<body>
+	<div class="layui-fluid">
+		<div class="layui-row layui-col-space5">
+			<div class="layui-col-sm4">
+				<div class="layui-card">
+					<div class=" layui-card-header">组织架构</div>
+					<div class="layui-card-body innerbox"
+						style="height: 500px; overflow-y: scroll;">
+						<div class="eleTree org" lay-filter="org"></div>
+					</div>
+				</div>
+			</div>
+			<div class="layui-col-sm8">
+				<div class="layui-card">
+					<div class=" layui-card-header">用户列表</div>
+					<div class="layui-card-body innerbox"
+						style="height: 500px; overflow-y: scroll">
+						<table id="userList" lay-filter="userList"></table>
+						<script type="text/html" id="barDemo">
+  							<a class="layui-btn layui-btn-xs" lay-event="edit">用户详情</a>
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/layuiadmin/layui/layui.js"></script>
+	<script>
+		layui
+				.config({
+					base : '/layuiadmin/' //静态资源所在路径
+				})
+				.extend({
+					index : 'lib/index', //主入口模块
+					eleTree : 'eleTree'
+				})
+				.use(
+						[ 'index', 'useradmin', 'table', 'eleTree' ],
+						function() {
+							var $ = layui.$, form = layui.form, table = layui.table, admin = layui.admin, eleTree = layui.eleTree;
+
+							eleTree.render({
+								elem : '.org',
+								url : '/os/getOrg',
+								method : 'get',
+							});
+
+							eleTree.on("nodeClick(org)", function(d) {
+								table.render({
+									elem : '#userList',
+									url : '/os/getUserListByDepartId' //模拟接口
+									,
+									where : {
+										departId : d.data.currentData.id
+									},
+									method : 'post',
+									cols : [ [ {
+										field : 'userid',
+										width : '33%',
+										title : 'ID'
+									}, {
+										field : 'name',
+										width : '33%',
+										title : '姓名'
+									}, {
+										title : '操作',
+										align : 'center',
+										toolbar: '#barDemo'
+									} ] ],
+									text : '对不起，加载出现异常！'
+								});
+							});
+
+							table.on('tool(userList)', function(obj){
+							    var data = obj.data;
+							    if(obj.event === 'edit'){
+							    	layer.open({
+							            type: 2
+							            ,title: '员工信息'
+							            ,content: '/os/userinfo/'+data.userid
+							            ,area: ['500px', '580px']
+							            ,btn: ['确定', '取消']
+							            ,yes: function(index, layero){
+							              var iframeWindow = window['layui-layer-iframe'+ index]
+							              ,submit = layero.find('iframe').contents().find("#LAY-user-role-submit");
+
+							              //监听提交
+							              iframeWindow.layui.form.on('submit(LAY-user-role-submit)', function(data){
+							            	  var field = data.field; //获取提交的字段
+							                  var mymsg1 = layer.msg('正在修改员工角色中，请稍候...', {
+							        			  icon: 16
+							        			  ,shade: 0.5
+							        			  ,time:false
+							        			});
+							                	admin.req({
+							    			        url: '/sys/userUpdate' //实际使用请改成服务端真实接口
+							    			        ,data: field
+							    			        ,success:function(rsp){
+							    				  		if(rsp.code==0){
+							    				  			layer.msg(rsp.msg, {icon: 1});
+							    				  			layer.close(index);
+							    				  			table.reload('LAY-user-manage'); //数据刷新
+							    					  	}else{
+							    					  		layer.close(mymsg1);
+							    						}
+							    					}
+							    			      });
+							              });  
+							              submit.trigger('click');
+							            }
+							          });
+							    }
+							  });
+						});
+
+							
+	</script>
+</body>
+</html>
