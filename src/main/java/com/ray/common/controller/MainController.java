@@ -120,6 +120,7 @@ public class MainController extends BaseController{
 	public void menus() {
 		try {
 			List<Record> top_menu = Db.find("select * from menu where parent_menu = 0 and is_hide = 0 order by seq_num");
+			top_menu = menuAuth(top_menu);
 			List<Record> menu = getMenus(top_menu);
 			renderJson(Ret.ok("menus", menu));
 		} catch (Exception e) {

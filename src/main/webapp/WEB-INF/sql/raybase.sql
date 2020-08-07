@@ -250,7 +250,7 @@ CREATE TABLE `serial_number` (
   `ingredient_plan_no` int(11) NOT NULL DEFAULT '1' COMMENT '配料单号',
   `cust_order_no` int(11) NOT NULL DEFAULT '1' COMMENT '客户订单号',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 /*Data for the table `serial_number` */
 
