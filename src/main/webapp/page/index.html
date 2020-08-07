@@ -95,7 +95,7 @@
             </a>
           </li>
           <li class="layui-nav-item layui-hide-xs" lay-unselect>
-            <a href="javascript:;" layadmin-event="fullscreen">
+            <a href="javascript:;" layadmin-event="fullscreen" @click="collapse_false">
               <i class="layui-icon layui-icon-screen-full"></i>
             </a>
           </li>
@@ -235,6 +235,13 @@
 	    isCollapse: false,
 	    menus:[]
 	  },
+	  mounted () {
+		  window.onresize = () =>{
+			return (() => {
+				this.isCollapse = false;
+			})();
+		  }
+      },
 	  methods: {
 	      collapse(){
 			if(this.isCollapse){
@@ -242,6 +249,9 @@
 			}else{
 				this.isCollapse = true;
 			}
+		  },
+		  collapse_false(){
+				this.isCollapse = false;
 		  },
 		  clickMenu(index){
 			  var indexArray = index.split("-");
