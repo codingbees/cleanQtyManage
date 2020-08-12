@@ -27,6 +27,7 @@ public class _MappingKit {
 		arp.addMapping("role_permission", "id", RolePermission.class);
 		arp.addMapping("roles", "id", Roles.class);
 		arp.addMapping("serial_number", "id", SerialNumber.class);
+		arp.addMapping("user", "id", User.class);
 		arp.addMapping("user_role", "id", UserRole.class);
 		arp.addMapping("yw_test", "id", YwTest.class);
 		arp.addMapping("yw_test_son", "id", YwTestSon.class);

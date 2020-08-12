@@ -32,7 +32,7 @@ Table: data_field
  is_auto        | BIT           | YES  |     | 0       | 主键是否自增长 
  type           | VARCHAR(10)   | YES  |     | input   | 控件类型    
  type_config    | VARCHAR(2000) | YES  |     |         | 控件配置    
- align          | VARCHAR(10)   | YES  |     | left    | 排列      
+ align          | VARCHAR(10)   | YES  |     | center  | 排列      
  is_query       | BIT           | YES  |     | 0       | 是否可查询   
  is_show        | BIT           | YES  |     | 1       | 是否可显示   
  is_disable     | BIT           | YES  |     | 0       | 是否禁用    
@@ -73,7 +73,7 @@ Table: data_object
  is_update    | BIT          | NO   |     | 1                 | 是否修改    
  is_delete    | BIT          | NO   |     | 1                 | 是否删除    
  is_handle    | BIT          | NO   |     | 1                 | 是否拥有操作列 
- handle_width | VARCHAR(255) | YES  |     |                   | 操作列宽度   
+ handle_width | VARCHAR(255) | YES  |     | 60                | 操作列宽度   
  create_time  | DATETIME(19) | NO   |     | CURRENT_TIMESTAMP | 创建时间    
 --------------+--------------+------+-----+-------------------+---------
 
@@ -171,6 +171,19 @@ Table: serial_number
  ingredient_plan_no | INT(10) | NO   |     | 1       | 配料单号    
  cust_order_no      | INT(10) | NO   |     | 1       | 客户订单号   
 --------------------+---------+------+-----+---------+---------
+
+Table: user
+--------------+--------------+------+-----+-------------------+---------
+ Field        | Type         | Null | Key | Default           | Remarks 
+--------------+--------------+------+-----+-------------------+---------
+ id           | INT(10)      | NO   | PRI |                   | ID      
+ username     | VARCHAR(255) | NO   |     |                   | 登录账号    
+ password     | VARCHAR(255) | NO   |     |                   | 登录密码    
+ nickname     | VARCHAR(255) | NO   |     |                   | 用户姓名    
+ ding_user_id | VARCHAR(255) | NO   |     |                   | 钉钉USERID
+ update_time  | DATETIME(19) | NO   |     | CURRENT_TIMESTAMP | 修改时间    
+ create_time  | DATETIME(19) | NO   |     | CURRENT_TIMESTAMP | 创建时间    
+--------------+--------------+------+-----+-------------------+---------
 
 Table: user_role
 ---------+--------------+------+-----+---------+---------

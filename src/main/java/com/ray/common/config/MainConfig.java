@@ -34,7 +34,7 @@ public class MainConfig extends JFinalConfig {
 	private static Prop p;
 	private WallFilter wallFilter;
 	private Routes routes;
-	private static MetaObjectIntercept defaultMetaObjectIntercept = null;
+	private static MetaObjectIntercept defaultMetaObjectIntercept = null; 
 	/**
 	 * 配置JFinal常量
 	 */

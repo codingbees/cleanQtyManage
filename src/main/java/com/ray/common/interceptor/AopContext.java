@@ -9,7 +9,6 @@ package com.ray.common.interceptor;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dingtalk.api.response.OapiUserGetResponse;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Record;
 import com.ray.common.model.DataObject;
@@ -31,7 +30,7 @@ public class AopContext {
     /**
      * 当前用户对象
      */
-    public OapiUserGetResponse user;
+    public Record user;
     
     /**
      * 当前元对豿(object.fields=元字段集吿)
@@ -80,7 +79,7 @@ public class AopContext {
 
     public AopContext(Controller ctrl){
         this.ctrl = ctrl;
-        this.user = (OapiUserGetResponse)ctrl.getSessionAttr("user");
+        this.user = (Record)ctrl.getSessionAttr("user");
     }
 
     public AopContext(Controller ctrl, List<Record> records){
@@ -94,7 +93,7 @@ public class AopContext {
     }
 
 	public String UID() {
-		return this.user.getUserid();
+		return this.user.get("id");
 	}
 
 }

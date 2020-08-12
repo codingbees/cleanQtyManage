@@ -62,47 +62,22 @@ public class MainController extends BaseController{
 		}
 		render("login.html");
 	}
-
+	
 	public void login() {
 		UsernamePasswordToken token = new UsernamePasswordToken(getPara("username"), getPara("password"));
 		Subject subject = SecurityUtils.getSubject();
-		Record rsp = new Record();
-		rsp.set("code", Integer.valueOf(0));
 		try {
 			subject.login(token);
-			rsp.set("result", Integer.valueOf(1));
-			rsp.set("msg", "登录成功");
-			rsp.set("icon", Integer.valueOf(1));
+			Record user = Db.findFirst("select * from user where username = '" + getPara("username") + "'");
+			subject.getSession().setAttribute("user", user);
+			renderJson(Ret.ok("msg", "登录成功"));
+		} catch (IncorrectCredentialsException ice) {
+			renderJson(Ret.fail("msg", "密码错误"));
+		} catch (UnknownAccountException uae) {
+			renderJson(Ret.fail("msg", "用户不存在"));
+		} catch (ExcessiveAttemptsException eae) {
+			renderJson(Ret.fail("msg", "错误登录过多"));
 		}
-		catch (IncorrectCredentialsException ice) {
-			rsp.set("result", Integer.valueOf(0));
-			rsp.set("msg", "密码错误");
-			rsp.set("icon", Integer.valueOf(5));
-			renderJson(rsp);
-			return;
-		}
-		catch (UnknownAccountException uae) {
-			rsp.set("result", Integer.valueOf(0));
-			rsp.set("msg", "用户不存在");
-			rsp.set("icon", Integer.valueOf(5));
-			renderJson(rsp);
-			return;
-		}
-		catch (ExcessiveAttemptsException eae) {
-			rsp.set("result", Integer.valueOf(0));
-			rsp.set("msg", "错误登录过多");
-			rsp.set("icon", Integer.valueOf(5));
-			renderJson(rsp);
-			return;
-		}
-		Record user = Db.findFirst("select * from user where username = '" + getPara("username") + "'");
-		subject.getSession().setAttribute("user", user);
-		try {
-			Redis.use("test").incr("loginTimes");
-		}
-		catch (Exception localException) {
-		}
-		renderJson(rsp);
 	}
 
 	public void logout() {
@@ -168,9 +143,9 @@ public class MainController extends BaseController{
 	
 	@NotAction
 	public List<Record> menuAuth(List<Record> menu){
-		OapiUserGetResponse user = (OapiUserGetResponse) getSessionAttr("user");
+		Record user = (Record)getSessionAttr("user");
 		String sql = "SELECT gl_id FROM permissions WHERE id IN (SELECT permission_id FROM role_permission WHERE role_id IN (SELECT role_id FROM user_role WHERE user_id = '"
-				+ user.getUserid() + "')) AND TYPE = 1";
+				+ user.get("id") + "')) AND TYPE = 1";
 		List<Record> menuPermissions = Db.find(sql);
 		for (int i = 0; i < menu.size(); i++) {
 			boolean flag = true;

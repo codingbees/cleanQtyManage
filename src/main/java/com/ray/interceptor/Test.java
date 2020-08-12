@@ -10,14 +10,14 @@ public class Test extends MetaObjectIntercept{
 	
 	@Override
 	public String queryBefore(AopContext ac) throws Exception {
-		ac.sql = ac.sql+" and create_user_id = '"+ac.user.getUserid()+"'";
+		ac.sql = ac.sql+" and create_user_id = '"+ac.user.get("id")+"'";
 		return ac.sql;
 	}
 	
 	@Override
 	public String addBefore(AopContext ac) throws Exception {
-		ac.record.set("create_user_id", ac.user.getUserid());
-		ac.record.set("create_user_name", ac.user.getName());
+		ac.record.set("create_user_id", ac.user.get("id"));
+		ac.record.set("create_user_name", ac.user.get("nickname"));
 		return null;
 	}
 	

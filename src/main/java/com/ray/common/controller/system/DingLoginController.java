@@ -30,10 +30,10 @@ public class DingLoginController extends Controller {
 		DefaultDingTalkClient  client = new DefaultDingTalkClient("https://oapi.dingtalk.com/sns/getuserinfo_bycode");
 		OapiSnsGetuserinfoBycodeRequest req = new OapiSnsGetuserinfoBycodeRequest();
 		req.setTmpAuthCode(getPara("code"));
-		OapiSnsGetuserinfoBycodeResponse response = client.execute(req,"dingoarbhd55u7xtx873ct","_M5n_T7reGxoSaD9hceAn1E1oeEXJIXbOZUOBTLKTmsrGEDQPiJDz4mQZ0H0eGz4");
+		OapiSnsGetuserinfoBycodeResponse response = client.execute(req,"dingoawhk0qy7xdambxeqc","IYXWOiIegeBcGZGUWDbyAFOzigW80PrVJbQ7I4J6a7DCFHDbHG-N_hLLixD_-XJ9");
 		String dingtoken = AccessTokenUtil.getToken();
 		//获取UserId
-		DingTalkClient client2 = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/getUseridByUnionid");                 
+		DingTalkClient client2 = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/getUseridByUnionid");
 		OapiUserGetUseridByUnionidRequest request2 = new OapiUserGetUseridByUnionidRequest();
 		request2.setUnionid(response.getUserInfo().getUnionid());
 		request2.setHttpMethod("GET");
@@ -46,10 +46,20 @@ public class DingLoginController extends Controller {
 			request.setUserid(userInfo.getUserid());
 			request.setHttpMethod("GET");
 			OapiUserGetResponse response3 = client3.execute(request, dingtoken);
-			UsernamePasswordToken token = new UsernamePasswordToken(userInfo.getUserid(), userInfo.getUserid());
+			Record user = Db.findFirst("select * from user where ding_user_id = '"+response3.getUserid()+"'");
+			if(user==null) {
+				user = new Record();
+				user.set("username", response3.getMobile());
+				user.set("password", response3.getMobile());
+				user.set("nickname", response3.getName());
+				user.set("ding_user_id", response3.getUserid());
+				Db.save("user", user);
+			}
+			user.set("dingUserInfo", response3);
+			UsernamePasswordToken token = new UsernamePasswordToken(user.get("username"), user.getStr("password"));
 			Subject subject = SecurityUtils.getSubject();
 			subject.login(token);
-			subject.getSession().setAttribute("user", response3);
+			subject.getSession().setAttribute("user", user);
 			//查询用户拥有角色供前端校验使用
 			Record record = Db.findFirst("SELECT GROUP_CONCAT(role_name) AS roles FROM roles WHERE id IN (SELECT role_id FROM user_role WHERE user_id = '09112815001228979')");
 			subject.getSession().setAttribute("user_roles", record.getStr("roles"));
@@ -104,26 +114,4 @@ public class DingLoginController extends Controller {
 		subject.getSession().setAttribute("user_roles", record.getStr("roles"));
 		redirect("/index");
 	}
-	
-	/**
-	 * 开发用
-	 */
-	public void y() throws ApiException{
-			String dingtoken = AccessTokenUtil.getToken();
-			//获取用户详情
-			DingTalkClient client3 = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/get");
-			OapiUserGetRequest request = new OapiUserGetRequest();
-			request.setUserid("09112815001228979");
-			request.setHttpMethod("GET");
-			OapiUserGetResponse response3 = client3.execute(request, dingtoken);
-			UsernamePasswordToken token = new UsernamePasswordToken("193125692825944092", "193125692825944092");
-			Subject subject = SecurityUtils.getSubject();
-			//查询用户拥有角色供前端校验使用
-			Record record = Db.findFirst("SELECT GROUP_CONCAT(role_name) AS roles FROM roles WHERE id IN (SELECT role_id FROM user_role WHERE user_id = '09112815001228979')");
-			subject.login(token);
-			subject.getSession().setAttribute("user", response3);
-			subject.getSession().setAttribute("user_roles", record.getStr("roles"));
-			redirect("/index");
-	}
-	
 }
