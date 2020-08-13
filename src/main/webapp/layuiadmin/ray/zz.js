@@ -32,6 +32,7 @@ function buildData(custom_data) {
 	  parent_selectList:[],
 	  son_data:[],
 	  son_columns:[],
+	  son_selectList:[],
 	  form:{},
 	  queryForm:{},
 	  parent:{},

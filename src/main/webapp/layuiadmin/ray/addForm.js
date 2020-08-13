@@ -113,7 +113,9 @@ Vue.component("add-form",{
 		      handleClose(done) {
 		          this.$confirm('确认关闭？')
 		            .then(_ => {
-		              done();
+		            	this.$parent.addDialogVisible = false;
+		            	this.$parent.parentDialogVisible = false;
+		            	this.$parent.sonDialogVisible = false;
 		            })
 		            .catch(_ => {});
 	          },
