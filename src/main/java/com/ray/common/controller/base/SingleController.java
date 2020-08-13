@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.json.FastJson;
+import com.jfinal.kit.Prop;
 import com.jfinal.kit.PropKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
@@ -213,14 +214,15 @@ public class SingleController extends BaseController {
 			if(fileArray!=null) {
 				DataField file_field = new DataField();
 				String fileIds = "";
+				Prop p = PropKit.use("config-dev.properties").appendIfExists("config-pro.properties");
 				for (int i = 0; i < fileArray.length; i++) {
 					JSONObject jb = JSONObject.parseObject(fileArray[i]);
 					if(!"".equals(jb.getString("response")) && jb.getString("response")!=null) {
 						JSONObject response = JSONObject.parseObject(jb.getString("response"));
-						File file = new File("D:/raybase/temp/"+response.getString("fileName"));
+						File file = new File(p.get("domin_path")+"/temp/"+response.getString("fileName"));
 						file_field = DataField.dao.findFirst("select * from data_field where data_object_id = "
 								+ get("object_id") + " and en='"+response.getString("column")+"'");
-						File newfile = new File("D:/raybase/"+file_field.getTypeConfig().split("\\|")[0]+"/"+UUID.randomUUID()+"."+response.getString("fileName").split("\\.")[1]);
+						File newfile = new File(p.get("domin_path")+"/"+file_field.getTypeConfig().split("\\|")[0]+"/"+UUID.randomUUID()+"."+response.getString("fileName").split("\\.")[1]);
 						File fileParent = newfile.getParentFile();
 						//判断文件夹是否存在
 						if (!fileParent.exists()) {

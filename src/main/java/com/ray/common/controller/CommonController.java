@@ -19,6 +19,8 @@ import com.github.liaochong.myexcel.utils.FileExportUtil;
 import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
 import com.jfinal.json.FastJson;
+import com.jfinal.kit.Prop;
+import com.jfinal.kit.PropKit;
 import com.jfinal.kit.Ret;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
@@ -40,6 +42,7 @@ public class CommonController extends BaseController {
 	
 	final Controller ctrl = this;
 	protected MetaObjectIntercept intercept = null;
+	static Prop p = PropKit.use("config-dev.properties").appendIfExists("config-pro.properties");
 	
 	/**
 	 * 根据表名和字段获取字典list
@@ -162,8 +165,8 @@ public class CommonController extends BaseController {
 				JSONObject jb = JSONObject.parseObject(fileArray[i]);
 				if(!"".equals(jb.getString("response")) && jb.getString("response")!=null) {
 					JSONObject response = JSONObject.parseObject(jb.getString("response"));
-					File file = new File("D:/raybase/temp/"+response.getString("fileName"));
-					File newfile = new File("D:/raybase/"+file_field.getFormatter().split("\\|")[0]+"/"+UUID.randomUUID()+"."+response.getString("fileName").split("\\.")[1]);
+					File file = new File(p.get("domin_path")+"/temp/"+response.getString("fileName"));
+					File newfile = new File(p.get("domin_path")+"/"+file_field.getFormatter().split("\\|")[0]+"/"+UUID.randomUUID()+"."+response.getString("fileName").split("\\.")[1]);
 					File fileParent = newfile.getParentFile();
 					//判断文件夹是否存在
 					if (!fileParent.exists()) {
@@ -292,7 +295,7 @@ public class CommonController extends BaseController {
 		        .fixedTitles()
 		        .build(dataMapList);
 		String filename = body.getString("filename")+"_"+new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss").format(new Date())+".xlsx";
-	    File file = new File("D:\\raybase\\export\\"+filename);
+	    File file = new File(p.get("domin_path")+"/export/"+filename);
 	    try {
 			FileExportUtil.export(workbook,file);
 		} catch (IOException e) {

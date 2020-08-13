@@ -45,11 +45,11 @@ public class MainConfig extends JFinalConfig {
 		//设置当前是否为开发模式
 		me.setDevMode(p.getBoolean("devMode"));
 		//设置默认上传文件保存路径 getFile等使用
-		me.setBaseUploadPath("D:/raybase/temp");
+		me.setBaseUploadPath(p.get("domin_path")+"/temp");
 		//设置上传最大限制尺寸
 		//me.setMaxPostSize(1024*1024*10);
 		//设置默认下载文件路径 renderFile使用
-		me.setBaseDownloadPath("D:/raybase/");
+		me.setBaseDownloadPath(p.get("domin_path"));
 		//设置默认视图类型
 		me.setViewType(ViewType.JFINAL_TEMPLATE);
 		//设置404渲染视图
