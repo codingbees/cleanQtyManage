@@ -54,6 +54,10 @@ public class DingLoginController extends Controller {
 				user.set("nickname", response3.getName());
 				user.set("ding_user_id", response3.getUserid());
 				Db.save("user", user);
+				UserRole ur = new UserRole();
+				ur.setRoleId(2);
+				ur.setUserId(user.get("id"));
+				ur.save(); 
 			}
 			user.set("dingUserInfo", response3);
 			UsernamePasswordToken token = new UsernamePasswordToken(user.get("username"), user.getStr("password"));
@@ -61,7 +65,7 @@ public class DingLoginController extends Controller {
 			subject.login(token);
 			subject.getSession().setAttribute("user", user);
 			//查询用户拥有角色供前端校验使用
-			Record record = Db.findFirst("SELECT GROUP_CONCAT(role_name) AS roles FROM roles WHERE id IN (SELECT role_id FROM user_role WHERE user_id = '09112815001228979')");
+			Record record = Db.findFirst("SELECT GROUP_CONCAT(role_name) AS roles FROM roles WHERE id IN (SELECT role_id FROM user_role WHERE user_id = '"+user.get("id")+"')");
 			subject.getSession().setAttribute("user_roles", record.getStr("roles"));
 			redirect("/index");
 		}else{
