@@ -217,10 +217,10 @@ public class SingleController extends BaseController {
 					JSONObject jb = JSONObject.parseObject(fileArray[i]);
 					if(!"".equals(jb.getString("response")) && jb.getString("response")!=null) {
 						JSONObject response = JSONObject.parseObject(jb.getString("response"));
-						File file = new File("D:/paperless_file/temp/"+response.getString("fileName"));
+						File file = new File("D:/raybase/temp/"+response.getString("fileName"));
 						file_field = DataField.dao.findFirst("select * from data_field where data_object_id = "
 								+ get("object_id") + " and en='"+response.getString("column")+"'");
-						File newfile = new File("D:/paperless_file/"+file_field.getTypeConfig().split("\\|")[0]+"/"+UUID.randomUUID()+"."+response.getString("fileName").split("\\.")[1]);
+						File newfile = new File("D:/raybase/"+file_field.getTypeConfig().split("\\|")[0]+"/"+UUID.randomUUID()+"."+response.getString("fileName").split("\\.")[1]);
 						File fileParent = newfile.getParentFile();
 						//判断文件夹是否存在
 						if (!fileParent.exists()) {

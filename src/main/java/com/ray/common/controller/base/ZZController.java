@@ -64,9 +64,14 @@ public class ZZController extends BaseController {
 		Record resp = new Record();
 		List<DataField> list = DataField.dao.find("select * from data_field where data_object_id = "+get("object_id")+" order by order_num");
 		resp.set("list", list);
+		//是否显示查询按钮
+				boolean is_query = false;
 		List<List<Record>> map = new ArrayList<List<Record>>();
 		Record validator = new Record();
 		for (int i = 0; i < list.size(); i++) {
+			if(list.get(i).getIsQuery()) {
+				is_query = true;
+			}
 			List<Record> temp = new ArrayList<Record>();
 			if("select".equals(list.get(i).getType())
 				|| "radio".equals(list.get(i).getType())) {
@@ -89,6 +94,7 @@ public class ZZController extends BaseController {
 		resp.set("data_object",DataObject.dao.findById(get("object_id")));
 		resp.set("selectMap", map);
 		resp.set("validator", validator);
+		resp.set("is_query", is_query);
 		renderJson(resp);
 	}
 	
@@ -255,10 +261,10 @@ public class ZZController extends BaseController {
 					JSONObject jb = JSONObject.parseObject(fileArray[i]);
 					if(!"".equals(jb.getString("response")) && jb.getString("response")!=null) {
 						JSONObject response = JSONObject.parseObject(jb.getString("response"));
-						File file = new File("D:/paperless_file/temp/"+response.getString("fileName"));
+						File file = new File("D:/raybase/temp/"+response.getString("fileName"));
 						file_field = DataField.dao.findFirst("select * from data_field where data_object_id = "
 								+ get("object_id") + " and en='"+response.getString("column")+"'");
-						File newfile = new File("D:/paperless_file/"+file_field.getTypeConfig().split("\\|")[0]+"/"+UUID.randomUUID()+"."+response.getString("fileName").split("\\.")[1]);
+						File newfile = new File("D:/raybase/"+file_field.getTypeConfig().split("\\|")[0]+"/"+UUID.randomUUID()+"."+response.getString("fileName").split("\\.")[1]);
 						File fileParent = newfile.getParentFile();
 						//判断文件夹是否存在
 						if (!fileParent.exists()) {

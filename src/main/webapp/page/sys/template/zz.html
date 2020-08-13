@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <title>#(model)</title>
 <script src="/layuiadmin/main.js"></script>
-<script src="/layuiadmin/vxe-render/index.js" type="module"></script>
+<script src="/layuiadmin/ray/queryForm.js"></script>
+<script src="/layuiadmin/ray/addForm.js"></script>
 <style type="text/css">
 </style>
 </head>
@@ -14,47 +15,9 @@
 	    	<el-main>
 	  			<el-card class="box-card">
 	  				<div ref="banner">
-	  					<el-row>
-		  					<el-form :inline="true" size="mini"class="demo-form-inline">
-							  <el-form-item v-for="(item,index) in parent_columns" v-if="item.is_query" :label="item.cn">
-							    <el-input v-if="item.type == 'input'" v-model="queryForm[item.en]"></el-input>
-							    <el-select v-if="item.type=='select' || item.type=='radio'" v-model="queryForm[item.en]" filterable placeholder="请选择">
-								    <el-option
-								      label="全部"
-								      value=""
-								      selected>
-								    </el-option>
-								    <el-option
-								      v-for="selectItem in parent_selectList[index]"
-								      :key="selectItem.id"
-								      :label="selectItem.label"
-								      :value="selectItem.value">
-								    </el-option>
-								</el-select>
-								<el-date-picker
-									v-if="item.type=='date'"
-							        v-model="queryForm[item.en]"
-							        type="daterange"
-							        value-format="yyyy-MM-dd"
-							        range-separator="至"
-							        start-placeholder="开始日期"
-							        end-placeholder="结束日期">
-							    </el-date-picker>
-							    <el-date-picker
-									v-if="item.type=='datetime'"
-							        v-model="queryForm[item.en]"
-							        type="datetimerange"
-							        value-format="yyyy-MM-dd HH:mm:ss"
-							        range-separator="至"
-							        start-placeholder="开始时间"
-							        end-placeholder="结束时间">
-							    </el-date-picker>
-							  </el-form-item>
-							  <el-form-item>
-							    <el-button type="primary" @click="query">查询</el-button>
-							  </el-form-item>
-							</el-form>
-						</el-row>
+	  					<!-- 查询form -->
+	  					<query-form :params="{columns:parent_columns,selectList:parent_selectList,is_query:is_query}"></query-form>
+						<!-- 查询form -->
 					</div>
 					<div :style="'height:'+split_height+'px'">
 				        <Split v-model="split" mode="vertical" on-moving="split_change">
@@ -75,7 +38,7 @@
 								    @checkbox-change="checkEvent"
 								    @checkbox-all="checkEvent"
 								    @checkbox-range="checkEvent"
-								    :pager-config="p_tablePage"
+								    :pager-config="tablePage"
 								    @page-change="handleCurrentChange"
 								    @edit-closed="parentEditClosedEvent" style="width: 100%">
 								    <template v-slot:toolbar_buttons>
@@ -183,141 +146,6 @@
 				    </div>
 				</el-card>
 				
-	  			<!-- 主表新增dialog -->
-	  			<el-dialog title="新增" :before-close="handleClose" :visible.sync="parentDialogVisible" :with-header="true">
-				  <el-row :gutter="4">
-					  <el-form :rules="parent_rules" ref="parent_form" :model="form" label-width="80px" size="mini">
-					    <el-col :span="item.type=='radio'?24:12" v-for="(item,index) in parent_columns">
-					  		<el-form-item v-if="item.is_add" :label="item.cn" :prop="item.en" :label-width="formLabelWidth">
-						      <el-input v-if="item.type == 'input'" v-model="form[item.en]"></el-input>
-						      <el-select v-if="item.type=='select'" v-model="form[item.en]" filterable placeholder="请选择" style="width:100%">
-							    <el-option
-							      v-for="selectItem in parent_selectList[index]"
-							      :key="selectItem.id"
-							      :label="selectItem.label"
-							      :value="selectItem.value">
-							    </el-option>
-							  </el-select>
-							  <el-radio-group v-if="item.type=='radio'" v-model="form[item.en]">
-							    <el-radio v-for="selectItem in parent_selectList[index]" :label="selectItem.value">{{selectItem.label}}</el-radio>
-							  </el-radio-group>
-							  <el-switch
-							  	  v-if="item.type=='switch'"
-								  v-model="form[item.en]"
-								  active-color="#13ce66"
-								  inactive-color="#ff4949">
-							  </el-switch>
-							  <el-date-picker
-									v-if="item.type=='date'"
-							        v-model="form[item.en]"
-							        type="date"
-							        value-format="yyyy-MM-dd"
-							        style="width:100%"
-							        placeholder="选择日期">
-							  </el-date-picker>
-							  <el-date-picker
-									v-if="item.type=='datetime'"
-							        v-model="form[item.en]"
-							        type="datetime"
-							        value-format="yyyy-MM-dd HH:mm:ss"
-							        style="width:100%"
-							        placeholder="选择日期">
-							  </el-date-picker>
-						      <el-upload
-						      	  v-if="item.type=='file'"
-								  class="upload-demo"
-								  ref="upload"
-								  action="/common/upload"
-								  :data="{column:item.en}"
-								  :accept="item.type_config.split('|')[2]"
-								  :multiple="false"
-								  :on-remove="beforeRemove"
-								  :on-success="handleSuccess"
-								  :on-exceed="handleExceed"
-								  :limit="parseInt(item.type_config.split('|')[1])"
-								  :file-list="fileList"
-								  :auto-upload="true">
-								  <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-								  <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
-								  <div slot="tip" class="el-upload__tip">只能上传{{item.type_config.split('|')[2]}}文件</div>
-							  </el-upload>
-						    </el-form-item>
-						  </el-col>
-					  </el-form>
-				  </el-row>
-				  <span slot="footer" class="dialog-footer">
-				    <el-button @click="parentDialogVisible = false">取 消</el-button>
-				    <el-button type="primary" @click="onSubmit('parent_form')">确 定</el-button>
-				  </span>
-				</el-dialog>
-				<!-- 主表新增dialog -->
-				
-				<!-- 子表新增dialog -->
-				<el-dialog title="新增子数据" :before-close="handleClose" :visible.sync="sonDialogVisible" :with-header="true">
-				  <el-row :gutter="4">
-					  <el-form :rules="son_rules" ref="sonForm" :model="form" label-width="80px" size="mini">
-					  	<el-col :span="item.type=='radio'?24:12" v-for="(item,index) in son_columns">
-					  		<el-form-item v-if="item.is_add" :label="item.cn" :prop="item.en" :label-width="formLabelWidth">
-						      <el-input v-if="item.type == 'input'" v-model="form[item.en]"></el-input>
-						      <el-select v-if="item.type=='select'" v-model="form[item.en]" filterable placeholder="请选择">
-							    <el-option
-							      v-for="selectItem in son_selectList[index]"
-							      :key="selectItem.id"
-							      :label="selectItem.label"
-							      :value="selectItem.value">
-							    </el-option>
-							  </el-select>
-							  <el-radio-group v-if="item.type=='radio'" v-model="form[item.en]">
-							    <el-radio v-for="selectItem in son_selectList[index]" :label="selectItem.value">{{selectItem.label}}</el-radio>
-							  </el-radio-group>
-							  <el-switch
-							  	  v-if="item.type=='switch'"
-								  v-model="form[item.en]"
-								  active-color="#13ce66"
-								  inactive-color="#ff4949">
-							  </el-switch>
-							  <el-date-picker
-									v-if="item.type=='date'"
-							        v-model="form[item.en]"
-							        type="date"
-							        value-format="yyyy-MM-dd"
-							        placeholder="选择日期">
-							  </el-date-picker>
-							  <el-date-picker
-									v-if="item.type=='datetime'"
-							        v-model="form[item.en]"
-							        type="datetime"
-							        value-format="yyyy-MM-dd HH:mm:ss"
-							        placeholder="选择日期">
-							  </el-date-picker>
-						      <el-upload
-						      	  v-if="item.type=='file'"
-								  class="upload-demo"
-								  ref="upload"
-								  action="/common/upload"
-								  :data="{column:item.en}"
-								  :accept="item.type_config.split('|')[2]"
-								  :multiple="false"
-								  :on-remove="beforeRemove"
-								  :on-success="handleSuccess"
-								  :on-exceed="handleExceed"
-								  :limit="parseInt(item.type_config.split('|')[1])"
-								  :file-list="fileList"
-								  :auto-upload="true">
-								  <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-								  <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button> -->
-								  <div slot="tip" class="el-upload__tip">只能上传{{item.type_config.split('|')[2]}}文件</div>
-							  </el-upload>
-						    </el-form-item>
-						  </el-col>
-					  </el-form>
-					</el-row>
-				  <span slot="footer" class="dialog-footer">
-				    <el-button @click="sonDialogVisible = false">取 消</el-button>
-				    <el-button type="primary" @click="onSubmit('sonForm')">确 定</el-button>
-				  </span>
-				</el-dialog>
-				<!-- 子表新增dialog -->
 				
 				<!-- 文件列表dialog -->
 				<el-dialog title="文件列表" :visible.sync="fileDialogVisible" :with-header="true" width="300px">
@@ -356,6 +184,13 @@
 				</el-dialog>
 	  		</el-main>
 		</el-container>
+		<!-- 主表新增dialog -->
+		<add-form :params="{columns:parent_columns,selectList:parent_selectList,rules:parent_rules,show:parentDialogVisible}"></add-form>
+		<!-- 主表新增dialog -->
+		
+		<!-- 子表新增dialog -->
+		<add-form :params="{columns:son_columns,selectList:son_selectList,rules:son_rules,show:sonDialogVisible}"></add-form>
+		<!-- 子表新增dialog -->
 	</div>
 <script src="/layuiadmin/ray/zz.js"></script>
 <script>

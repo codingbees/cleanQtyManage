@@ -29,12 +29,11 @@ function buildData(custom_data) {
 	  data_object:{},
 	  datas:[],
 	  columns:[],
-	  form:{},
+	  selectList:[],
 	  is_query:false,
 	  queryForm:{},
-	  fileList:[],
 	  inFileList:[],
-	  dialogVisible: false,
+	  addDialogVisible: false,
 	  fileDialogVisible:false,
 	  dialogTitle:'',
       formLabelWidth: '120px',
@@ -77,6 +76,7 @@ function buildData(custom_data) {
 	  dialogHeight:'',
 	  file_edit:false,
 	  domin_url:'',
+	  fileList:[]
   }, custom_data)
 }
 //初始化watch
@@ -143,7 +143,8 @@ function buildMethods(custom_methods) {
 	    		url:"/single/getData",
 	    		params:{object_id:_this.menu.data_object_id,
 	    			parent_id:_this.parent_id,
-	    			parent_id_field:_this.parent_id_field,currentPage:_this.tablePage.currentPage,pageSize:_this.tablePage.pageSize}
+	    			parent_id_field:_this.parent_id_field,
+	    			queryForm:_this.queryForm,currentPage:_this.tablePage.currentPage,pageSize:_this.tablePage.pageSize}
     		}).then((res)=>{
 		    	if(res.status==200){
 			    	if(res.data.state=="fail"){
@@ -162,14 +163,16 @@ function buildMethods(custom_methods) {
           this.tablePage.pageSize = pageSize
           this.getData();
 	  },
-	  query(){
+	  query(params){
 		  var _this = this;
+		  _this.queryForm = params;
+		  _this.tablePage.currentPage = 1;
 		  axios({
 	    		method:"post",
 	    		url:"/single/getData",
 	    		params:{object_id:_this.menu.data_object_id,
 	    			parent_id:_this.parent_id,
-	    			parent_id_field:_this.parent_id_field,queryForm:_this.queryForm,currentPage:_this.tablePage.currentPage,pageSize:_this.tablePage.pageSize}
+	    			parent_id_field:_this.parent_id_field,queryForm:params,currentPage:_this.tablePage.currentPage,pageSize:_this.tablePage.pageSize}
     		}).then((res)=>{
 		    	if(res.status==200){
 		    		_this.datas = res.data.list;
@@ -181,40 +184,31 @@ function buildMethods(custom_methods) {
 	  },
 	  addInit:function(){
     	this.dialogTitle='新增';
-    	this.form = {};
-    	this.fileList = [];
-    	this.dialogVisible = true;
+    	this.addDialogVisible = true;
 	  },
-      onSubmit:function(formName){
+      onSubmit:function(form,fileList){
     	  var _this = this;
-    	  this.$refs[formName].validate((valid) => {
-              if (valid) {
-            	  axios({
-	  		    		method:"post",
-	  		    		url:"/single/new_",
-	  		    		params:{form:_this.form,fileList:_this.fileList,object_id:_this.menu.data_object_id,parent_id:_this.parent_id,
-	  		    			parent_id_field:_this.parent_id_field}
-	  	    		}).then((res)=>{
-	  			    	if(res.status==200){
-	  			    		if(res.data.state=="ok"){
-	  				    		_this.$message({
-	  			    		          message: res.data.msg,
-	  			    		          type: 'success'
-	  			    		        });
-	  				    		_this.dialogVisible = false;
-	  				    		_this.getData();
-	  					    }else{
-	  					    	this.$message.error(res.data.msg);
-	  						}
-	  				  	}else{
-	  				  		this.$message.error('网络请求失败');
-	  				  	}
-	  	    		})
-              } else {
-            	  console.log('error submit!!');
-                  return false;
-              }
-            });
+    	  axios({
+	    		method:"post",
+	    		url:"/single/new_",
+	    		params:{form:form,fileList:fileList,object_id:_this.menu.data_object_id,parent_id:_this.parent_id,
+	    			parent_id_field:_this.parent_id_field}
+    		}).then((res)=>{
+		    	if(res.status==200){
+		    		if(res.data.state=="ok"){
+			    		_this.$message({
+		    		          message: res.data.msg,
+		    		          type: 'success'
+		    		        });
+			    		_this.addDialogVisible = false;
+			    		_this.getData();
+				    }else{
+				    	this.$message.error(res.data.msg);
+					}
+			  	}else{
+			  		this.$message.error('网络请求失败');
+			  	}
+    		})
       },
       //cell编辑
 	  editClosedEvent ({ row, column }, event) {
@@ -230,7 +224,7 @@ function buildMethods(custom_methods) {
 		    		          message: res.data.msg,
 		    		          type: 'success'
 		    		        });
-			    		_this.query();
+			    		_this.getData();
 				    }else{
 				    	this.$message.error(res.data.msg);
 					}
@@ -279,17 +273,17 @@ function buildMethods(custom_methods) {
           })
           .catch(_ => {});
          },
-         beforeRemove(file, fileList) {
-      		this.fileList = fileList;
+      beforeRemove(file, fileList) {
+      	  this.fileList = fileList;
       },
       handleSuccess(res,file,fileList){
-        	this.fileList = fileList;
+      	  this.fileList = fileList;
       },
       handleExceed(file, fileList){
-    	  this.$message({
-              type: 'error',
-              message: '超出文件个数限制'
-          });
+	  	  this.$message({
+	            type: 'error',
+	            message: '超出文件个数限制'
+	        });
       },
       exportDataEvent:function({ options }) {
     	  var _this = this;
@@ -437,7 +431,7 @@ function buildMethods(custom_methods) {
 		    		          message: res.data.msg,
 		    		          type: 'success'
 		    		        });
-				    		_this.query();
+				    		_this.getData();
 					    }else{
 					    	this.$message.error(res.data.msg);
 						}
@@ -465,7 +459,7 @@ function buildMethods(custom_methods) {
 		    		          message: res.data.msg,
 		    		          type: 'success'
 		    		        });
-				    		_this.query();
+				    		_this.getData();
 					    }else{
 					    	this.$message.error(res.data.msg);
 						}
@@ -502,7 +496,7 @@ function buildMethods(custom_methods) {
 			    		          message: res.data.msg,
 			    		          type: 'success'
 			    		        });
-					    		_this.query();
+					    		_this.getData();
 						    }else{
 						    	this.$message.error(res.data.msg);
 							}
@@ -536,7 +530,7 @@ function buildMethods(custom_methods) {
 			    		          message: res.data.msg,
 			    		          type: 'success'
 			    		        });
-					    		_this.query();
+					    		_this.getData();
 						    }else{
 						    	this.$message.error(res.data.msg);
 							}

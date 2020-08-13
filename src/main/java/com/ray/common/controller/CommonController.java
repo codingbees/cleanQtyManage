@@ -162,8 +162,8 @@ public class CommonController extends BaseController {
 				JSONObject jb = JSONObject.parseObject(fileArray[i]);
 				if(!"".equals(jb.getString("response")) && jb.getString("response")!=null) {
 					JSONObject response = JSONObject.parseObject(jb.getString("response"));
-					File file = new File("D:/paperless_file/temp/"+response.getString("fileName"));
-					File newfile = new File("D:/paperless_file/"+file_field.getFormatter().split("\\|")[0]+"/"+UUID.randomUUID()+"."+response.getString("fileName").split("\\.")[1]);
+					File file = new File("D:/raybase/temp/"+response.getString("fileName"));
+					File newfile = new File("D:/raybase/"+file_field.getFormatter().split("\\|")[0]+"/"+UUID.randomUUID()+"."+response.getString("fileName").split("\\.")[1]);
 					File fileParent = newfile.getParentFile();
 					//判断文件夹是否存在
 					if (!fileParent.exists()) {
@@ -292,7 +292,7 @@ public class CommonController extends BaseController {
 		        .fixedTitles()
 		        .build(dataMapList);
 		String filename = body.getString("filename")+"_"+new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss").format(new Date())+".xlsx";
-	    File file = new File("D:\\paperless_file\\export\\"+filename);
+	    File file = new File("D:\\raybase\\export\\"+filename);
 	    try {
 			FileExportUtil.export(workbook,file);
 		} catch (IOException e) {

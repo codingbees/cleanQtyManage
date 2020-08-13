@@ -29,6 +29,7 @@ function buildData(custom_data) {
 	  split:0.5,
 	  parent_data:[],
 	  parent_columns:[],
+	  parent_selectList:[],
 	  son_data:[],
 	  son_columns:[],
 	  form:{},
@@ -44,11 +45,12 @@ function buildData(custom_data) {
       split_height:0,
       parent_height:0,
       son_height:0,
+      is_query:false,
       exportConfig: {
           remote: true,
           exportMethod: this.exportDataEvent
       },
-      p_tablePage: {
+      tablePage: {
           currentPage: 1,
           pageSize: 20,
           total: 0,
@@ -145,6 +147,7 @@ function buildMethods(custom_methods) {
 		    		_this.parent_columns = res.data.list;
 		    		_this.parent_selectList = res.data.selectMap;
 		    		_this.parent_rules = res.data.validator;
+		    		_this.is_query = res.data.is_query;
 		    		_this.p_headButtons = res.data.headButtons;
 		    		_this.p_lineButtons = res.data.lineButtons;
 		    		_this.p_data_object = res.data.data_object;
@@ -177,43 +180,43 @@ function buildMethods(custom_methods) {
 		  axios({
 	    		method:"post",
 	    		url:"/zz/getData",
-	    		params:{object_id:_this.menu.data_object_id,currentPage:_this.p_tablePage.currentPage,pageSize:_this.p_tablePage.pageSize}
+	    		params:{object_id:_this.menu.data_object_id,queryForm:_this.queryForm,currentPage:_this.tablePage.currentPage,pageSize:_this.tablePage.pageSize}
     		}).then((res)=>{
 		    	if(res.status==200){
 		    		if(res.data.state=="fail"){
 			    		this.$message.error(res.data.msg);
 				    }else{
 			    		_this.parent_data = res.data.list;
-			    		_this.p_tablePage.total = res.data.totalResult;
+			    		_this.tablePage.total = res.data.totalResult;
 				    }
 			  	}else{
 			  		this.$message.error('网络请求失败');
 			  	}
     		})
 	  },
-	  query(){
+	  query(params){
 		  var _this = this;
+		  _this.queryForm = params;
+		  _this.tablePage.currentPage = 1;
 		  axios({
 	    		method:"post",
 	    		url:"/zz/getData",
-	    		params:{object_id:_this.menu.data_object_id,queryForm:_this.queryForm,currentPage:_this.p_tablePage.currentPage,pageSize:_this.p_tablePage.pageSize}
+	    		params:{object_id:_this.menu.data_object_id,queryForm:params,currentPage:_this.tablePage.currentPage,pageSize:_this.tablePage.pageSize}
     		}).then((res)=>{
 		    	if(res.status==200){
 		    		_this.parent_data = res.data.list;
-		    		_this.p_tablePage.total = res.data.totalResult;
+		    		_this.tablePage.total = res.data.totalResult;
 			  	}else{
 			  		this.$message.error('网络请求失败');
 			  	}
     		})
 	  },
 	  handleCurrentChange:function({ currentPage, pageSize }){
-		  this.p_tablePage.currentPage = currentPage
-          this.p_tablePage.pageSize = pageSize
+		  this.tablePage.currentPage = currentPage
+          this.tablePage.pageSize = pageSize
           this.getParentData();
 	  },
 	  parentAddInit:function(){
-    	this.form = {};
-    	this.fileList = [];
     	this.type = "parent";
     	this.parentDialogVisible = true;
 	  },
@@ -224,21 +227,19 @@ function buildMethods(custom_methods) {
     	this.parent = row;
     	this.sonDialogVisible = true;
 	  },
-      onSubmit:function(formName){
+      onSubmit:function(form,fileList){
     	  var _this = this;
-    	  this.$refs[formName].validate((valid) => {
-              if (valid) {
-		    	var object_id = "";
-		    	if(_this.type=="parent"){
-		    		object_id=_this.menu.data_object_id;
-			    }else{
-			    	object_id=_this.menu.son_data_object_id;
-				}
-		    	axios({
-		    		method:"post",
-		    		url:"/zz/new_",
-		    		params:{object_id:object_id,form:_this.form,fileList:_this.fileList,type:_this.type,parent:_this.parent,menu_id:_this.menu.id}
-	    		}).then((res)=>{
+    	    var object_id = "";
+	    	if(_this.type=="parent"){
+	    		object_id=_this.menu.data_object_id;
+		    }else{
+		    	object_id=_this.menu.son_data_object_id;
+			}
+	    	axios({
+	    		method:"post",
+	    		url:"/zz/new_",
+	    		params:{object_id:object_id,form:form,fileList:fileList,type:_this.type,parent:_this.parent,menu_id:_this.menu.id}
+			}).then((res)=>{
 			    	if(res.status==200){
 			    		if(res.data.state=="ok"){
 				    		_this.$message({
@@ -247,16 +248,14 @@ function buildMethods(custom_methods) {
 			    		        });
 				    		_this.parentDialogVisible = false;
 				    		_this.sonDialogVisible = false;
-				    		_this.query();
+				    		_this.getParentData();
 					    }else{
 					    	this.$message.error(res.data.error);
 						}
 				  	}else{
 				  		this.$message.error('网络请求失败');
 				  	}
-	    		})
-              }
-    	  })
+			})
       },
       //cell编辑
 	  parentEditClosedEvent ({ row, column }, event) {
