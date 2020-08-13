@@ -2,12 +2,10 @@ package com.ray.common.controller;
 
 import com.jfinal.core.NotAction;
 import com.jfinal.kit.Ret;
-/*     */
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.redis.Redis;
 import com.taobao.api.ApiException;
-
 import java.util.List;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
@@ -22,14 +20,14 @@ public class MainController extends BaseController{
 	 * 开发用
 	 */
 	public void a() throws ApiException{ 
-		UsernamePasswordToken token = new UsernamePasswordToken("admin", "admin");
-		Subject subject = SecurityUtils.getSubject();
-		subject.login(token);
-		Record user = Db.findFirst("select * from user where username = 'admin'");
-		subject.getSession().setAttribute("user", user);
-		Record record = Db.findFirst("SELECT GROUP_CONCAT(role_name) AS roles FROM roles WHERE id IN (SELECT role_id FROM user_role WHERE user_id = 1)");
-		subject.getSession().setAttribute("user_roles", record.getStr("roles"));
-		redirect("/index");
+			UsernamePasswordToken token = new UsernamePasswordToken("admin", "admin");
+			Subject subject = SecurityUtils.getSubject();
+			subject.login(token);
+			Record user = Db.findFirst("select * from user where username = 'admin'");
+			subject.getSession().setAttribute("user", user);
+			Record record = Db.findFirst("SELECT GROUP_CONCAT(role_name) AS roles FROM roles WHERE id IN (SELECT role_id FROM user_role WHERE user_id = '"+user.get("id")+"')");
+			subject.getSession().setAttribute("user_roles", record.getStr("roles"));
+			redirect("/index");
 	}
 	
 	public void dingLogin(){
@@ -59,6 +57,8 @@ public class MainController extends BaseController{
 			subject.login(token);
 			Record user = Db.findFirst("select * from user where username = '" + getPara("username") + "'");
 			subject.getSession().setAttribute("user", user);
+			Record record = Db.findFirst("SELECT GROUP_CONCAT(role_name) AS roles FROM roles WHERE id IN (SELECT role_id FROM user_role WHERE user_id = '"+user.get("id")+"')");
+			subject.getSession().setAttribute("user_roles", record.getStr("roles"));
 			renderJson(Ret.ok("msg", "登录成功"));
 		} catch (IncorrectCredentialsException ice) {
 			renderJson(Ret.fail("msg", "密码错误"));
