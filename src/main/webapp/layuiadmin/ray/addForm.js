@@ -60,7 +60,7 @@ Vue.component("add-form",{
 						  </el-form>
 				      </el-row>
 					  <span slot="footer" class="dialog-footer">
-					    <el-button @click="show = false">取 消</el-button>
+					    <el-button @click="close()">取 消</el-button>
 					    <el-button type="primary" @click="onSubmit('form')">确 定</el-button>
 					  </span>
 					</el-dialog>`,
@@ -118,6 +118,11 @@ Vue.component("add-form",{
 		            	this.$parent.sonDialogVisible = false;
 		            })
 		            .catch(_ => {});
+	          },
+	          close() {
+	            	this.$parent.addDialogVisible = false;
+	            	this.$parent.parentDialogVisible = false;
+	            	this.$parent.sonDialogVisible = false;
 	          },
 		  }
 })
