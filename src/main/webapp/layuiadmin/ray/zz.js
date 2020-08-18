@@ -679,6 +679,21 @@ function buildMethods(custom_methods) {
 			        });
 			}
 	  },
+	  headButtonDialogClick(button){
+	    var _this = this;
+    	if(_this.parent_select_rows.length>0){
+	        	_this.buttonDialog = true;
+		    	_this.buttonDialogSrc = button.dialog_src;
+		    	_this.buttonDialogTitle = button.dialog_title;
+		    	_this.buttonDialogWidth = button.dialog_width;
+		    	_this.dialogRows = _this.parent_select_rows;
+			}else{
+				this.$message({
+			          message: '请至少选择一行数据进行操作',
+			          type: 'warning'
+			    });
+			}
+	  },
 	  son_headButtonConfirmClick(button){
 		  var _this = this;
 		  if(_this.son_select_rows.length>0){
@@ -746,6 +761,21 @@ function buildMethods(custom_methods) {
 			        });
 			}
 	  },
+	  son_headButtonDialogClick(button){
+		    var _this = this;
+	    	if(_this.son_select_rows.length>0){
+		        	_this.buttonDialog = true;
+			    	_this.buttonDialogSrc = button.dialog_src;
+			    	_this.buttonDialogTitle = button.dialog_title;
+			    	_this.buttonDialogWidth = button.dialog_width;
+			    	_this.dialogRows = _this.son_select_rows;
+				}else{
+					this.$message({
+				          message: '请至少选择一行数据进行操作',
+				          type: 'warning'
+				    });
+				}
+		  },
 	  parent_fileEdit({row,column}){
     	  var _this = this;
     	  _this.type = "parent";

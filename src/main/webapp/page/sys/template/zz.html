@@ -43,7 +43,7 @@
 								    @edit-closed="parentEditClosedEvent" style="width: 100%">
 								    <template v-slot:toolbar_buttons>
 							            <el-button v-if="p_data_object.is_add" type="primary" size="mini" @click="parentAddInit" style="margin-left:10px">新增</el-button>
-							            <el-button v-for="item in p_headButtons" v-if="item.is_show&&headButtonAuth(item)" size="mini" :type="item.color" :icon="item.icon" @click="item.type==1?headButtonConfirmClick(item):headButtonComboboxClick(item)">{{item.name}}</el-button>
+							            <el-button v-for="item in p_headButtons" v-if="item.is_show&&headButtonAuth(item)" size="mini" :type="item.color" :icon="item.icon" @click="item.type==1?headButtonConfirmClick(item):item.type==2?headButtonComboboxClick(item):headButtonDialogClick(item)">{{item.name}}</el-button>
 							          </template>
 							          <vxe-table-column type="checkbox" title="" width="60"></vxe-table-column>
 								      <vxe-table-column v-if="item.is_show" v-for="(item,index) in parent_columns" :key="item.id"
@@ -101,7 +101,7 @@
 								    @checkbox-all="son_checkEvent"
 								    @checkbox-range="son_checkEvent">
 								    <template v-slot:toolbar_buttons>
-							            <el-button style="margin-left:10px" v-for="item in s_headButtons" v-if="item.is_show&&headButtonAuth(item)" size="mini" :type="item.color" :icon="item.icon" @click="item.type==1?son_headButtonConfirmClick(item):son_headButtonComboboxClick(item)">{{item.name}}</el-button>
+							            <el-button style="margin-left:10px" v-for="item in s_headButtons" v-if="item.is_show&&headButtonAuth(item)" size="mini" :type="item.color" :icon="item.icon" @click="item.type==1?son_headButtonConfirmClick(item):item.type==2?son_headButtonComboboxClick(item):son_headButtonDialogClick(item)">{{item.name}}</el-button>
 							          </template>
 							          <vxe-table-column type="checkbox" title="" width="60"></vxe-table-column>
 								      <vxe-table-column v-if="item.is_show" v-for="(item,index) in son_columns" :key="item.id"

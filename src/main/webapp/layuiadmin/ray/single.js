@@ -546,6 +546,21 @@ function buildMethods(custom_methods) {
 			        });
 			}
 	  },
+	  headButtonDialogClick(button){
+	    var _this = this;
+    	if(_this.select_rows.length>0){
+	        	_this.buttonDialog = true;
+		    	_this.buttonDialogSrc = button.dialog_src;
+		    	_this.buttonDialogTitle = button.dialog_title;
+		    	_this.buttonDialogWidth = button.dialog_width;
+		    	_this.dialogRows = _this.select_rows;
+			}else{
+				this.$message({
+			          message: '请至少选择一行数据进行操作',
+			          type: 'warning'
+			    });
+			}
+	  },
 	  checkEvent ({ checked, records }) {
 		  this.select_rows = records
             },
