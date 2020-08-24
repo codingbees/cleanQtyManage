@@ -324,6 +324,20 @@ function buildMethods(custom_methods) {
     	  _this.selectRow = row;
     	  _this.file_column = column.property;
     	  _this.file_edit = true;
+    	  var itemInfo = column.cellRender.props.itemInfo;
+    	  if(itemInfo.update_validate!=null){
+    		    var auth = JSON.parse(itemInfo.update_validate);
+				for(var j = 0;j<auth.length;j++){
+					for(let key  in row){
+				        if(key == auth[j].field){
+					        var aaa = row[key]+auth[j].operator+auth[j].value;
+				        	if(!eval(aaa)){
+								_this.file_edit = false;
+					        }
+					    }
+				    }
+				}
+    	  }
     	  axios({
 	    		method:"post",
 	    		url:"/common/getFileList",

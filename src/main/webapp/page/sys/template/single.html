@@ -59,7 +59,7 @@
 								 item.type=='select'||item.type=='radio'?{'cell-render':{name:'cell-select',options: selectList[index]}}:
 								 item.type=='switch'?{'cell-render':{name:'cell-switch'}}:'')
 								 
-								 :item.is_update&&data_object.is_update?{'cell-render':{name: '$button',props:{status:'primary',size:'small',content:'查看'},events:{click:fileEdit}}}:
+								 :item.is_update&&data_object.is_update?{'cell-render':{name: '$button',props:{status:'primary',size:'small',content:'查看',itemInfo:item},events:{click:fileEdit}}}:
 								 {'cell-render':{name: '$button',props:{status:'primary',size:'small',content:'查看'},events:{click:fileScan}}}">
 						      </vxe-table-column>
 						      <vxe-table-column
