@@ -27,7 +27,7 @@ public abstract class BaseUserRole<M extends BaseUserRole<M>> extends Model<M> i
 	/**
 	 * 用户ID
 	 */
-	public M setUserId(java.lang.String userId) {
+	public M setUserId(java.lang.Integer userId) {
 		set("user_id", userId);
 		return (M)this;
 	}
@@ -35,8 +35,8 @@ public abstract class BaseUserRole<M extends BaseUserRole<M>> extends Model<M> i
 	/**
 	 * 用户ID
 	 */
-	public java.lang.String getUserId() {
-		return getStr("user_id");
+	public java.lang.Integer getUserId() {
+		return getInt("user_id");
 	}
 
 	/**

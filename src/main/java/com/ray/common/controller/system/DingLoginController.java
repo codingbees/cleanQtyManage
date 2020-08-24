@@ -103,11 +103,11 @@ public class DingLoginController extends Controller {
 		}
 		UsernamePasswordToken token = new UsernamePasswordToken(userId, userId);
 		//如果用户没有任何角色，就初始化普通用户角色
-		UserRole ur = UserRole.dao.findFirst("select * from user_role where role_id = 2 and user_id ='"+userId+"'");
+		UserRole ur = UserRole.dao.findFirst("select * from user_role where role_id = 2 and user_id ="+userId);
 		if(ur==null){
 			ur = new UserRole();
 			ur.setRoleId(2);
-			ur.setUserId(userId);
+			//ur.setUserId(userId);
 			ur.save();
 		};
 		//查询用户拥有角色供前端校验使用

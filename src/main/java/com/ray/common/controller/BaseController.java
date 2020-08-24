@@ -17,4 +17,18 @@ public class BaseController extends Controller{
 		OapiUserGetResponse user = (OapiUserGetResponse) getSessionAttr("user");
 		return user.getName();
 	}
+	
+	/**
+	 * 获取分页-当前页
+	 */
+	protected Integer getCurrentPage(){
+		return getInt("currentPage");
+	}
+	
+	/**
+	 * 获取分页-每页显示多少条
+	 */
+	protected Integer getPageSize(){
+		return getInt("pageSize");
+	}
 }

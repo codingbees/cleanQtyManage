@@ -9,6 +9,8 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.SqlPara;
 import com.jfinal.plugin.activerecord.tx.Tx;
+import com.ray.common.model.UserRole;
+import com.ray.common.model.Roles;
 import com.ray.common.controller.BaseController;
 import com.ray.common.model.DataObject;
 import com.ray.common.model.Menu;
@@ -121,14 +123,60 @@ public class SysController extends BaseController
   }
   
   public void getRole() {
-    List<Record> roles = Db.find("select * from roles");
-    Record layTableRes = new Record();
-    layTableRes.set("code", Integer.valueOf(0));
-    layTableRes.set("msg", "");
-    layTableRes.set("count", Integer.valueOf(roles.size()));
-    layTableRes.set("data", roles);
-    renderJson(layTableRes);
+	  Record resp = new Record();
+		SqlPara sqlPara = new SqlPara();
+		sqlPara.setSql("select * from roles");
+		Page<Roles> list = Roles.dao.paginate(getCurrentPage(), getPageSize(), sqlPara);
+		resp.set("list", list.getList());
+		resp.set("totalPage", list.getTotalPage());
+		renderJson(resp);
   }
+  
+  /**
+	 * 获取角色人员穿梭框列表
+	 */
+	public void getRoleUser(){
+		Record resp = new Record();
+		List<Record> list = Db.find("select * from user");
+		List<Record> selectList = Db.find("select * from user_role where role_id = "+get("role_id"));
+		int[] select = new int[selectList.size()];
+		for (int i = 0; i < selectList.size(); i++) {
+			select[i] = selectList.get(i).get("user_id");
+		}
+		resp.set("list", list);
+		resp.set("select", select);
+		renderJson(resp);
+	}
+	
+	/**
+	 * 设置角色人员
+	 */
+	public void setUserRole() {
+		Record res = new Record();
+		try {
+			//先清空当前角色所有人员
+			List<UserRole> list = UserRole.dao.find("select * from user_role where role_id = "+get("role_id"));
+			for (int i = 0; i < list.size(); i++) {
+				list.get(i).delete();
+			}
+			Integer[] user_ids= getParaValuesToInt("user_ids[]");
+			if(user_ids!=null) {
+				for (int i = 0; i < user_ids.length; i++) {
+					UserRole ur = new UserRole();
+					ur.setUserId(user_ids[i]);
+					ur.setRoleId(getInt("role_id"));
+					ur.save();
+				}
+			}
+			res.set("msg", "设置成功！");
+			res.set("code", 1);
+		} catch (Exception e) {
+			e.getMessage();
+			res.set("code", 0);
+			res.set("msg", "设置失败，原因："+e);
+		}
+		renderJson(res);
+	}
   
   public void getMenuTree() {
     Record rsp = new Record();
