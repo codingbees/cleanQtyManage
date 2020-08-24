@@ -78,6 +78,16 @@ public class ZZController extends BaseController {
 				String sql = "select "+list.get(i).getTypeConfig().split("\\|")[1]+" as label,"
 						+ list.get(i).getTypeConfig().split("\\|")[2]+" as value "
 						+ list.get(i).getTypeConfig().split("\\|")[0];
+				if(list.get(i).getTypeConfig().split("\\|").length>=4) {
+					if("where".indexOf(list.get(i).getTypeConfig().split("\\|")[0])==-1) {
+						sql += "where 1=1";
+					}
+					String[] query = list.get(i).getTypeConfig().split("\\|")[3].split(",");
+					Record user = (Record)getSessionAttr("user");
+					for (int j = 0; j < query.length; j++) {
+						sql += " and "+query[j].split(":")[0]+user.get(query[j].split(":")[1]);
+					}
+				}
 				temp = Db.find(sql);
 			}
 			map.add(temp);
