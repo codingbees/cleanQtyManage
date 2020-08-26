@@ -213,10 +213,16 @@ public class CommonController extends BaseController {
 				sqlString += ",";
 			}
 			if(fields.get(i).getIsFictitious()) {
-				sqlString += "("+fields.get(i).getConfig()+") as "+fields.get(i).getEn();
+				if("select".equals(fields.get(i).getType()) || "radio".equals(fields.get(i).getType())) {
+					sqlString += "(select "+fields.get(i).getTypeConfig().split("\\|")[1]+" "+fields.get(i).getTypeConfig().split("\\|")[0]+""
+							+ " and "+fields.get(i).getTypeConfig().split("\\|")[2]+" =("+fields.get(i).getFictitiousSql()+")) as "+fields.get(i).getEn();
+				}else {
+					sqlString += "("+fields.get(i).getFictitiousSql()+") as "+fields.get(i).getEn();
+				}
 			}else {
-				if(("select".equals(fields.get(i).getType()) || "radio".equals(fields.get(i).getType())) && !fields.get(i).getIsUpdate()) {
-					sqlString += "("+fields.get(i).getConfig()+") as "+fields.get(i).getEn();
+				if("select".equals(fields.get(i).getType()) || "radio".equals(fields.get(i).getType())) {
+					sqlString += "(select "+fields.get(i).getTypeConfig().split("\\|")[1]+" "+fields.get(i).getTypeConfig().split("\\|")[0]+""
+							+ " and "+fields.get(i).getTypeConfig().split("\\|")[2]+" = "+fields.get(i).getEn()+") as "+fields.get(i).getEn();
 				}else {
 					sqlString += fields.get(i).getEn();
 				}
@@ -288,7 +294,7 @@ public class CommonController extends BaseController {
 		List<String> titles = new ArrayList(headerMap.values());
 		List<String> orders = new ArrayList(headerMap.keySet());
 		Workbook workbook = DefaultExcelBuilder.of(Map.class)
-		        .sheetName("sheet1")
+		        .sheetName("导出")
 		        .titles(titles)
 		        .widths(10,20)
 		        .fieldDisplayOrder(orders)
