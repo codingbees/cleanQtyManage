@@ -345,6 +345,12 @@
 								      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
 								      </vxe-table-column>
 								      <vxe-table-column
+								      	field="dialog_height" 
+								      	show-overflow
+								      	title="dialog高度"
+								      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
+								      </vxe-table-column>
+								      <vxe-table-column
 								      	field="dialog_src" 
 								      	show-overflow
 								      	title="dialog地址"
@@ -433,7 +439,7 @@
 					      <el-input v-model="form.cn" autocomplete="off"></el-input>
 					    </el-form-item>
 					    <el-form-item label="配置来源" :label-width="formLabelWidth">
-					      <el-input type="textarea" v-model="form.config" autocomplete="off"></el-input>
+					      <el-input type="textarea" v-model="form.fictitious_sql" autocomplete="off"></el-input>
 					    </el-form-item>
 					  </el-form>
 					  <div slot="footer" class="dialog-footer">
@@ -504,6 +510,12 @@
 					          <el-col :span="12">
 					            <el-form-item label="dialog宽度" prop="dialog_width">
 					              <el-input v-model="form.dialog_width" placeholder="请输入dialog宽度" clearable :style="{width: '100%'}">
+					              </el-input>
+					            </el-form-item>
+					          </el-col>
+					          <el-col :span="12">
+					            <el-form-item label="dialog高度" prop="dialog_height">
+					              <el-input v-model="form.dialog_height" placeholder="请输入dialog高度" clearable :style="{width: '100%'}">
 					              </el-input>
 					            </el-form-item>
 					          </el-col>
