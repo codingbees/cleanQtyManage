@@ -18,6 +18,18 @@ function getQueryString(name) {
     }
     return '';
 }
+
+//弹出框
+var tempDialog;
+
+layui.config({
+    base: '/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index'],function(){
+	  var $ = layui.$;
+  }); 
+
 //初始化data
 function buildData(custom_data) {
   return Object.assign({
@@ -485,11 +497,23 @@ function buildMethods(custom_methods) {
 	  },
 	  lineButtonDialogClick(row,button){
 		    var _this = this;
-    		_this.buttonDialog = true;
+    		/*_this.buttonDialog = true;
 	    	_this.buttonDialogSrc = button.dialog_src;
 	    	_this.buttonDialogTitle = button.dialog_title;
-	    	_this.buttonDialogWidth = button.dialog_width;
+	    	_this.buttonDialogWidth = button.dialog_width;*/
 	    	_this.dialogRow = row;
+	    	tempDialog = layer.open({
+		    	  type: 2,
+		    	  title: button.dialog_title,
+		    	  shade: 0.5,
+		    	  offset: '50px',
+		    	  area: [button.dialog_width, button.dialog_height],
+		    	  content: button.dialog_src
+		    }); 
+		    
+	  },
+	  dialogClose(){
+		  layer.close(tempDialog);
 	  },
 	  headButtonConfirmClick(button){
 		  var _this = this;
@@ -563,17 +587,25 @@ function buildMethods(custom_methods) {
 	  headButtonDialogClick(button){
 	    var _this = this;
     	if(_this.select_rows.length>0){
-	        	_this.buttonDialog = true;
-		    	_this.buttonDialogSrc = button.dialog_src;
-		    	_this.buttonDialogTitle = button.dialog_title;
-		    	_this.buttonDialogWidth = button.dialog_width;
-		    	_this.dialogRows = _this.select_rows;
-			}else{
-				this.$message({
-			          message: '请至少选择一行数据进行操作',
-			          type: 'warning'
-			    });
-			}
+    		/*_this.buttonDialog = true;
+	    	_this.buttonDialogSrc = button.dialog_src;
+	    	_this.buttonDialogTitle = button.dialog_title;
+	    	_this.buttonDialogWidth = button.dialog_width;*/
+	    	_this.dialogRows = _this.select_rows;
+	    	tempDialog = layer.open({
+		    	  type: 2,
+		    	  title: button.dialog_title,
+		    	  shade: 0.5,
+		    	  offset: '50px',
+		    	  area: [button.dialog_width, button.dialog_height],
+		    	  content: button.dialog_src
+		    }); 
+		}else{
+			this.$message({
+		          message: '请至少选择一行数据进行操作',
+		          type: 'warning'
+		    });
+		}
 	  },
 	  checkEvent ({ checked, records }) {
 		  this.select_rows = records
