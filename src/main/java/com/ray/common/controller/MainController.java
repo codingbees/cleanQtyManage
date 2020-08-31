@@ -24,9 +24,9 @@ public class MainController extends BaseController{
 			Subject subject = SecurityUtils.getSubject();
 			subject.login(token);
 			Record user = Db.findFirst("select * from user where username = 'admin'");
-			subject.getSession().setAttribute("user", user);
 			Record record = Db.findFirst("SELECT GROUP_CONCAT(role_name) AS roles FROM roles WHERE id IN (SELECT role_id FROM user_role WHERE user_id = '"+user.get("id")+"')");
-			subject.getSession().setAttribute("user_roles", record.getStr("roles"));
+			user.set("roles", record.getStr("roles"));
+			subject.getSession().setAttribute("user", user);
 			redirect("/index");
 	}
 	
@@ -56,9 +56,9 @@ public class MainController extends BaseController{
 		try {
 			subject.login(token);
 			Record user = Db.findFirst("select * from user where username = '" + getPara("username") + "'");
-			subject.getSession().setAttribute("user", user);
 			Record record = Db.findFirst("SELECT GROUP_CONCAT(role_name) AS roles FROM roles WHERE id IN (SELECT role_id FROM user_role WHERE user_id = '"+user.get("id")+"')");
-			subject.getSession().setAttribute("user_roles", record.getStr("roles"));
+			user.set("roles", record.getStr("roles"));
+			subject.getSession().setAttribute("user", user);
 			renderJson(Ret.ok("msg", "登录成功"));
 		} catch (IncorrectCredentialsException ice) {
 			renderJson(Ret.fail("msg", "密码错误"));

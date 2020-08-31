@@ -262,15 +262,15 @@
 			  var url = '';
 			  if(thisMenu.type==1){
 				  if(thisMenu.href==null){
-					  url = '/page/sys/template/single.html?id='+thisMenu.id+'&user_roles=#(session.user_roles)';
+					  url = '/page/sys/template/single.html?id='+thisMenu.id+'&user_roles=#(session.user.roles)';
 				  }else{
-					  url = thisMenu.href+'?id='+thisMenu.id+'&user_roles=#(session.user_roles)';
+					  url = thisMenu.href+'?id='+thisMenu.id+'&user_roles=#(session.user.roles)';
 				  }
 			  }else if(thisMenu.type==2){
 				  if(thisMenu.href==null){
-					  url = '/page/sys/template/zz.html?id='+thisMenu.id+'&user_roles=#(session.user_roles)';
+					  url = '/page/sys/template/zz.html?id='+thisMenu.id+'&user_roles=#(session.user.roles)';
 				  }else{
-					  url = thisMenu.href+'?id='+thisMenu.id+'&user_roles=#(session.user_roles)';
+					  url = thisMenu.href+'?id='+thisMenu.id+'&user_roles=#(session.user.roles)';
 				  }
 			  }else{
 				  url = thisMenu.href;

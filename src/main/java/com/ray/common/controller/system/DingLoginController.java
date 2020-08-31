@@ -63,10 +63,9 @@ public class DingLoginController extends Controller {
 			UsernamePasswordToken token = new UsernamePasswordToken(user.get("username"), user.getStr("password"));
 			Subject subject = SecurityUtils.getSubject();
 			subject.login(token);
-			subject.getSession().setAttribute("user", user);
-			//查询用户拥有角色供前端校验使用
 			Record record = Db.findFirst("SELECT GROUP_CONCAT(role_name) AS roles FROM roles WHERE id IN (SELECT role_id FROM user_role WHERE user_id = '"+user.get("id")+"')");
-			subject.getSession().setAttribute("user_roles", record.getStr("roles"));
+			user.set("roles", record.getStr("roles"));
+			subject.getSession().setAttribute("user", user);
 			redirect("/index");
 		}else{
 			redirect("/loginInit?code=1&icon=5");
@@ -97,25 +96,30 @@ public class DingLoginController extends Controller {
 		OapiUserGetResponse userinfo = null;
 		try {
 			userinfo = client3.execute(request1, accessToken);
+			Record user = Db.findFirst("select * from user where ding_user_id = '"+userinfo.getUserid()+"'");
+			if(user==null) {
+				user = new Record();
+				user.set("username", userinfo.getMobile());
+				user.set("password", userinfo.getMobile());
+				user.set("nickname", userinfo.getName());
+				user.set("ding_user_id", userinfo.getUserid());
+				Db.save("user", user);
+				UserRole ur = new UserRole();
+				ur.setRoleId(2);
+				ur.setUserId(user.getInt("id"));
+				ur.save(); 
+			}
+			user.set("dingUserInfo", userinfo);
+			UsernamePasswordToken token = new UsernamePasswordToken(user.get("username"), user.getStr("password"));
+			Subject subject = SecurityUtils.getSubject();
+			subject.login(token);
+			Record record = Db.findFirst("SELECT GROUP_CONCAT(role_name) AS roles FROM roles WHERE id IN (SELECT role_id FROM user_role WHERE user_id = '"+user.get("id")+"')");
+			user.set("roles", record.getStr("roles"));
+			subject.getSession().setAttribute("user", user);
+			redirect("/index");
 		} catch (ApiException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			redirect("/loginInit?code=1&icon=5");
 		}
-		UsernamePasswordToken token = new UsernamePasswordToken(userId, userId);
-		//如果用户没有任何角色，就初始化普通用户角色
-		UserRole ur = UserRole.dao.findFirst("select * from user_role where role_id = 2 and user_id ="+userId);
-		if(ur==null){
-			ur = new UserRole();
-			ur.setRoleId(2);
-			//ur.setUserId(userId);
-			ur.save();
-		};
-		//查询用户拥有角色供前端校验使用
-		Record record = Db.findFirst("SELECT GROUP_CONCAT(role_name) AS roles FROM roles WHERE id IN (SELECT role_id FROM user_role WHERE user_id = '"+userId+"')");
-		Subject subject = SecurityUtils.getSubject();
-		subject.login(token);
-		subject.getSession().setAttribute("user", userinfo);
-		subject.getSession().setAttribute("user_roles", record.getStr("roles"));
-		redirect("/index");
 	}
 }

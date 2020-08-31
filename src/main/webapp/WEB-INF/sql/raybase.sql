@@ -31,18 +31,19 @@ CREATE TABLE `data_button` (
   `color` varchar(255) DEFAULT NULL COMMENT '按钮样式',
   `tip` text NOT NULL COMMENT '按钮提示信息',
   `dialog_title` varchar(255) DEFAULT NULL COMMENT 'dialog标题',
-  `dialog_width` varchar(255) DEFAULT NULL COMMENT 'dialog宽度',
+  `dialog_width` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '600px' COMMENT 'dialog宽度',
+  `dialog_height` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '50%' COMMENT 'dialog高度',
   `dialog_src` varchar(255) DEFAULT NULL COMMENT 'dialog地址',
   `action` varchar(255) NOT NULL COMMENT '按钮访问后端action',
   `auth_role` varchar(255) DEFAULT NULL COMMENT '角色标识权限集合',
   `auth_row` varchar(255) DEFAULT NULL COMMENT '行内权限',
   `is_show` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否显示',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COMMENT='元数据按钮';
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COMMENT='元数据按钮';
 
 /*Data for the table `data_button` */
 
-insert  into `data_button`(`id`,`data_object_id`,`location`,`type`,`order_num`,`icon`,`name`,`color`,`tip`,`dialog_title`,`dialog_width`,`dialog_src`,`action`,`auth_role`,`auth_row`,`is_show`) values (1,18,2,1,0,'el-icon-edit','提交报告','success','确认是否要提交此报告？',NULL,NULL,NULL,'/test/ttt','admin','[{\"field\":\"statu\",\"operator\":\"==\",\"value\":\"0\"},{\"field\":\"test_statu\",\"operator\":\"==\",\"value\":\"1\"}]',1),(7,18,1,1,1,NULL,'嘻哈','info','请输入嘻嘻哈哈',NULL,NULL,NULL,'/test/ttt','admin','[{\"field\":\"statu\",\"operator\":\"==\",\"value\":\"1\"}]',1),(9,20,1,1,0,NULL,'test','primary','test',NULL,NULL,NULL,'/test/ttt',NULL,NULL,1),(10,20,2,1,1,NULL,'tt','success','tt',NULL,NULL,NULL,'/test/ttt',NULL,NULL,1),(11,20,2,3,2,NULL,'34234','info','4545','tttt',NULL,'/page/sys/template/buttonDialog.html','/',NULL,NULL,1),(12,18,2,2,1,NULL,'你好','warning','你好，请输入你的名字',NULL,NULL,NULL,'/test/ttt',NULL,NULL,1),(13,18,2,3,2,NULL,'弹出','danger','1111','你好','1000px','/page/sys/template/buttonDialog.html','1111',NULL,NULL,1),(14,20,1,1,1,NULL,'sdfsdf','success','sdfsdf',NULL,NULL,NULL,'/test/ttt',NULL,NULL,1),(15,2,2,1,0,NULL,'启用','success','确认要启用该定时任务吗？',NULL,NULL,NULL,'/quartz/start',NULL,'[{\"field\":\"state\",\"operator\":\"==\",\"value\":\"0\"}]',1),(16,2,2,1,1,NULL,'关闭','danger','确认要关闭该定时任务吗？',NULL,NULL,NULL,'/quartz/stop',NULL,'[{\"field\":\"state\",\"operator\":\"==\",\"value\":\"1\"}]',1),(17,2,2,1,2,NULL,'执行一次','primary','确认是否要立即执行一次？',NULL,NULL,NULL,'/quartz/trigger',NULL,NULL,1);
+insert  into `data_button`(`id`,`data_object_id`,`location`,`type`,`order_num`,`icon`,`name`,`color`,`tip`,`dialog_title`,`dialog_width`,`dialog_height`,`dialog_src`,`action`,`auth_role`,`auth_row`,`is_show`) values (1,18,2,1,0,'el-icon-edit','提交报告','success','确认是否要提交此报告？',NULL,NULL,NULL,NULL,'/test/ttt','admin','[{\"field\":\"statu\",\"operator\":\"==\",\"value\":\"0\"},{\"field\":\"test_statu\",\"operator\":\"==\",\"value\":\"1\"}]',1),(7,18,1,1,1,NULL,'嘻哈','info','请输入嘻嘻哈哈',NULL,NULL,NULL,NULL,'/test/ttt','admin','[{\"field\":\"statu\",\"operator\":\"==\",\"value\":\"1\"}]',1),(9,20,1,1,0,NULL,'test','primary','test',NULL,NULL,NULL,NULL,'/test/ttt',NULL,NULL,1),(10,20,2,1,1,NULL,'tt','success','tt',NULL,NULL,NULL,NULL,'/test/ttt',NULL,NULL,1),(11,20,2,3,2,NULL,'34234','info','4545','tttt',NULL,NULL,'/page/sys/template/buttonDialog.html','/',NULL,NULL,1),(12,18,2,2,1,NULL,'你好','warning','你好，请输入你的名字',NULL,NULL,NULL,NULL,'/test/ttt',NULL,NULL,1),(13,18,2,3,2,NULL,'弹出','danger','1111','你好','1000px',NULL,'/page/sys/template/buttonDialog.html','1111',NULL,NULL,1),(14,20,1,1,1,NULL,'sdfsdf','success','sdfsdf',NULL,NULL,NULL,NULL,'/test/ttt',NULL,NULL,1),(15,2,2,1,0,NULL,'启用','success','确认要启用该定时任务吗？',NULL,NULL,NULL,NULL,'/quartz/start',NULL,'[{\"field\":\"state\",\"operator\":\"==\",\"value\":\"0\"}]',1),(16,2,2,1,1,NULL,'关闭','danger','确认要关闭该定时任务吗？',NULL,NULL,NULL,NULL,'/quartz/stop',NULL,'[{\"field\":\"state\",\"operator\":\"==\",\"value\":\"1\"}]',1),(17,2,2,1,2,NULL,'执行一次','primary','确认是否要立即执行一次？',NULL,NULL,NULL,NULL,'/quartz/trigger',NULL,NULL,1),(18,18,1,3,2,NULL,'弹出','primary','/','弹出','600px','50%','/page/sys/template/buttonDialog.html','/',NULL,NULL,1);
 
 /*Table structure for table `data_field` */
 
@@ -189,7 +190,7 @@ CREATE TABLE `menu` (
 
 /*Data for the table `menu` */
 
-insert  into `menu`(`id`,`menu_level`,`parent_menu`,`title_en`,`title`,`seq_num`,`icon`,`type`,`data_object_id`,`son_data_object_id`,`parent_id_field`,`son_id_field`,`href`,`is_hide`) values (1,1,0,'system','系统设置',999,'pfep-shezhi',3,0,0,NULL,NULL,NULL,0),(2,2,1,'role','角色管理',1,NULL,3,0,0,NULL,NULL,'/sys/role',0),(3,2,1,'menu','菜单管理',2,NULL,3,0,0,NULL,NULL,'/sys/menu',0),(4,2,1,'org','组织架构',0,NULL,3,0,0,NULL,NULL,'/os',0),(145,2,1,'/data','元数据管理',998,'pfep-shujumoxing',3,9,9,NULL,NULL,'/data',0),(148,1,0,'basedata','基础演示',997,'pfep-jichushujuweihu',3,4,4,NULL,NULL,NULL,0),(151,2,1,'zd','字典管理',5,NULL,1,1,1,NULL,NULL,NULL,0),(152,2,148,'test','单表模板',3,NULL,1,18,4,NULL,NULL,NULL,0),(153,2,148,'zzb','主子表模板',4,NULL,2,18,20,'id','yw_test_id',NULL,0),(156,2,1,'quartz','定时任务',6,NULL,1,2,1,NULL,NULL,NULL,0),(157,2,1,'user','用户管理',0,NULL,1,3,1,NULL,NULL,NULL,0);
+insert  into `menu`(`id`,`menu_level`,`parent_menu`,`title_en`,`title`,`seq_num`,`icon`,`type`,`data_object_id`,`son_data_object_id`,`parent_id_field`,`son_id_field`,`href`,`is_hide`) values (1,1,0,'system','系统设置',999,'pfep-shezhi',3,0,0,NULL,NULL,NULL,0),(2,2,1,'role','角色管理',1,NULL,3,0,0,NULL,NULL,'/sys/role',0),(3,2,1,'menu','菜单管理',2,NULL,3,0,0,NULL,NULL,'/sys/menu',0),(145,2,1,'/data','元数据管理',998,'pfep-shujumoxing',3,9,9,NULL,NULL,'/data',0),(148,1,0,'basedata','基础演示',997,'pfep-jichushujuweihu',3,4,4,NULL,NULL,NULL,0),(151,2,1,'zd','字典管理',5,NULL,1,1,1,NULL,NULL,NULL,0),(152,2,148,'test','单表模板',3,NULL,1,18,4,NULL,NULL,NULL,0),(153,2,148,'zzb','主子表模板',4,NULL,2,18,20,'id','yw_test_id',NULL,0),(156,2,1,'quartz','定时任务',6,NULL,1,2,1,NULL,NULL,NULL,0),(157,2,1,'user','用户管理',0,NULL,1,3,1,NULL,NULL,NULL,0);
 
 /*Table structure for table `permissions` */
 
@@ -202,11 +203,11 @@ CREATE TABLE `permissions` (
   `type` int(1) NOT NULL COMMENT '权限类型：1菜单，2按钮，3数据',
   `gl_id` int(11) DEFAULT NULL COMMENT '关联菜单ID',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2304 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2325 DEFAULT CHARSET=utf8;
 
 /*Data for the table `permissions` */
 
-insert  into `permissions`(`id`,`name`,`permission_name`,`type`,`gl_id`) values (1994,NULL,NULL,1,112),(1995,NULL,NULL,1,133),(1996,NULL,NULL,1,113),(1997,NULL,NULL,1,114),(1998,NULL,NULL,1,121),(1999,NULL,NULL,1,132),(2094,NULL,NULL,1,109),(2095,NULL,NULL,1,125),(2096,NULL,NULL,1,111),(2097,NULL,NULL,1,124),(2098,NULL,NULL,1,137),(2099,NULL,NULL,1,115),(2100,NULL,NULL,1,123),(2101,NULL,NULL,1,112),(2102,NULL,NULL,1,114),(2103,NULL,NULL,1,121),(2104,NULL,NULL,1,122),(2105,NULL,NULL,1,126),(2106,NULL,NULL,1,130),(2107,NULL,NULL,1,127),(2108,NULL,NULL,1,121),(2109,NULL,NULL,1,122),(2167,NULL,NULL,1,138),(2168,NULL,NULL,1,139),(2169,NULL,NULL,1,140),(2170,NULL,NULL,1,141),(2171,NULL,NULL,1,142),(2172,NULL,NULL,1,143),(2173,NULL,NULL,1,138),(2174,NULL,NULL,1,139),(2175,NULL,NULL,1,140),(2176,NULL,NULL,1,141),(2177,NULL,NULL,1,142),(2178,NULL,NULL,1,143),(2259,NULL,NULL,1,148),(2260,NULL,NULL,1,149),(2261,NULL,NULL,1,151),(2293,NULL,NULL,1,1),(2294,NULL,NULL,1,4),(2295,NULL,NULL,1,157),(2296,NULL,NULL,1,2),(2297,NULL,NULL,1,3),(2298,NULL,NULL,1,151),(2299,NULL,NULL,1,156),(2300,NULL,NULL,1,145),(2301,NULL,NULL,1,148),(2302,NULL,NULL,1,152),(2303,NULL,NULL,1,153);
+insert  into `permissions`(`id`,`name`,`permission_name`,`type`,`gl_id`) values (1994,NULL,NULL,1,112),(1995,NULL,NULL,1,133),(1996,NULL,NULL,1,113),(1997,NULL,NULL,1,114),(1998,NULL,NULL,1,121),(1999,NULL,NULL,1,132),(2094,NULL,NULL,1,109),(2095,NULL,NULL,1,125),(2096,NULL,NULL,1,111),(2097,NULL,NULL,1,124),(2098,NULL,NULL,1,137),(2099,NULL,NULL,1,115),(2100,NULL,NULL,1,123),(2101,NULL,NULL,1,112),(2102,NULL,NULL,1,114),(2103,NULL,NULL,1,121),(2104,NULL,NULL,1,122),(2105,NULL,NULL,1,126),(2106,NULL,NULL,1,130),(2107,NULL,NULL,1,127),(2108,NULL,NULL,1,121),(2109,NULL,NULL,1,122),(2167,NULL,NULL,1,138),(2168,NULL,NULL,1,139),(2169,NULL,NULL,1,140),(2170,NULL,NULL,1,141),(2171,NULL,NULL,1,142),(2172,NULL,NULL,1,143),(2173,NULL,NULL,1,138),(2174,NULL,NULL,1,139),(2175,NULL,NULL,1,140),(2176,NULL,NULL,1,141),(2177,NULL,NULL,1,142),(2178,NULL,NULL,1,143),(2259,NULL,NULL,1,148),(2260,NULL,NULL,1,149),(2261,NULL,NULL,1,151),(2314,NULL,NULL,1,1),(2315,NULL,NULL,1,4),(2316,NULL,NULL,1,157),(2317,NULL,NULL,1,2),(2318,NULL,NULL,1,3),(2319,NULL,NULL,1,151),(2320,NULL,NULL,1,156),(2321,NULL,NULL,1,145),(2322,NULL,NULL,1,148),(2323,NULL,NULL,1,152),(2324,NULL,NULL,1,153);
 
 /*Table structure for table `role_permission` */
 
@@ -217,11 +218,11 @@ CREATE TABLE `role_permission` (
   `role_id` int(11) NOT NULL COMMENT '角色ID',
   `permission_id` int(11) NOT NULL COMMENT '权限ID',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2317 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2338 DEFAULT CHARSET=utf8;
 
 /*Data for the table `role_permission` */
 
-insert  into `role_permission`(`id`,`role_id`,`permission_id`) values (2186,2,2173),(2187,2,2174),(2188,2,2175),(2189,2,2176),(2190,2,2177),(2191,2,2178),(2306,1,2293),(2307,1,2294),(2308,1,2295),(2309,1,2296),(2310,1,2297),(2311,1,2298),(2312,1,2299),(2313,1,2300),(2314,1,2301),(2315,1,2302),(2316,1,2303);
+insert  into `role_permission`(`id`,`role_id`,`permission_id`) values (2186,2,2173),(2187,2,2174),(2188,2,2175),(2189,2,2176),(2190,2,2177),(2191,2,2178),(2327,1,2314),(2328,1,2315),(2329,1,2316),(2330,1,2317),(2331,1,2318),(2332,1,2319),(2333,1,2320),(2334,1,2321),(2335,1,2322),(2336,1,2323),(2337,1,2324);
 
 /*Table structure for table `roles` */
 
@@ -281,14 +282,14 @@ DROP TABLE IF EXISTS `user_role`;
 
 CREATE TABLE `user_role` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `user_id` varchar(255) NOT NULL COMMENT '用户ID',
+  `user_id` int(11) NOT NULL COMMENT '用户ID',
   `role_id` int(11) NOT NULL COMMENT '角色ID',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4656 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4657 DEFAULT CHARSET=utf8;
 
 /*Data for the table `user_role` */
 
-insert  into `user_role`(`id`,`user_id`,`role_id`) values (1,'1',1);
+insert  into `user_role`(`id`,`user_id`,`role_id`) values (1,1,1);
 
 /*Table structure for table `yw_test` */
 
@@ -313,7 +314,7 @@ CREATE TABLE `yw_test` (
 
 /*Data for the table `yw_test` */
 
-insert  into `yw_test`(`id`,`workshop`,`no`,`name`,`is_show`,`file_url`,`statu`,`test_statu`,`create_user_id`,`create_user_name`,`create_date`,`create_time`,`update_time`) values (1,6,'NO1','第一条产线1112 ',1,'91,98',0,1,'1','超级管理员','2020-07-01','2020-06-24 16:32:15','2020-07-15 15:33:07'),(2,7,'NO2斯蒂芬斯蒂芬斯蒂芬啥地方sdfsdfsdfsdfsdfsdfsdfsdf电话','第二条产线哟',1,'',0,1,'1','超级管理员','2020-07-22','2020-06-28 10:38:15','2020-07-15 15:33:07'),(40,1,'1223','收拾收拾443',1,'104,105',1,1,'1','超级管理员','2020-07-25','2020-07-15 14:22:29','2020-08-04 14:54:24'),(41,1,'12','13',1,'106',1,1,'1','超级管理员','2020-07-15','2020-07-15 14:48:44','2020-08-04 14:55:55'),(42,2,'122','斯蒂芬斯蒂芬斯蒂芬12121时代发生的发的收到发生大火sdf收到收到收到发生的 ',1,NULL,1,1,'1','超级管理员','2020-07-24','2020-07-15 15:10:59','2020-08-05 09:17:44'),(43,3,'sdfsdf芬斯蒂芬斯蒂芬sdfsdf','1sdfsdf',1,NULL,0,2,'1','超级管理员','2020-07-25','2020-07-15 15:16:09','2020-08-04 16:11:09'),(56,3,'2123123','222222',1,NULL,0,1,'1','超级管理员','2020-07-08','2020-07-24 15:29:24','2020-08-04 11:45:51');
+insert  into `yw_test`(`id`,`workshop`,`no`,`name`,`is_show`,`file_url`,`statu`,`test_statu`,`create_user_id`,`create_user_name`,`create_date`,`create_time`,`update_time`) values (1,6,'','第一条产线',1,'91,98',0,1,'1','超级管理员','2020-07-01','2020-06-24 16:32:15','2020-08-22 09:51:59'),(2,7,'NO2斯蒂芬斯蒂芬斯蒂芬啥地方sdfsdfsdfsdfsdfsdfsdfsdf电话','第二条产线哟',1,'',0,1,'1','超级管理员','2020-07-22','2020-06-28 10:38:15','2020-07-15 15:33:07'),(40,1,'1223','收拾收拾443121212',1,'104,105',1,1,'1','超级管理员','2020-07-25','2020-07-15 14:22:29','2020-08-22 09:45:07'),(41,1,'12','13221',1,'106',1,1,'1','超级管理员','2020-07-15','2020-07-15 14:48:44','2020-08-22 09:47:17'),(42,2,'122','斯蒂芬斯蒂芬斯蒂芬12121时代发生的发的收到发生大火sdf收到收到收到发生的 ',1,NULL,1,1,'1','超级管理员','2020-07-24','2020-07-15 15:10:59','2020-08-05 09:17:44'),(43,3,'sdfsdf芬斯蒂芬斯蒂芬sdfsdf','1sdfsdf',1,NULL,0,2,'1','超级管理员','2020-07-25','2020-07-15 15:16:09','2020-08-04 16:11:09'),(56,3,'2123123','222222',1,NULL,0,1,'1','超级管理员','2020-07-08','2020-07-24 15:29:24','2020-08-04 11:45:51');
 
 /*Table structure for table `yw_test_son` */
 
