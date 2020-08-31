@@ -17,382 +17,398 @@
 	<div id="app">
 		<el-container>
 	    	<el-main>
-	  			<el-card class="box-card">
-	  				<el-row>
-						<el-button type="primary" @click="addInit">新建模型</el-button>
-					</el-row>
-					<el-row>
-			  			<template>
-						    <vxe-table :data="objects" 
-						    :edit-config="{trigger: 'dblclick', mode: 'row'}"
-						    @edit-closed="editEvent" :highlight-current-row="true" :border="true" @current-change="getFieldsAndButtons" size="mini" :height="fullHeight-555" style="width: 100%">
-						      <vxe-table-column
-						      	field="id" 
-						      	title="ID">
-						      </vxe-table-column>
-						      <vxe-table-column
-						      	field="en" 
-						      	title="标识"
-						      	show-overflow
-						      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
-						      </vxe-table-column>
-						      <vxe-table-column
-						      	field="cn" 
-						      	title="对象"
-						      	show-overflow
-						      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
-						      </vxe-table-column>
-						      <vxe-table-column
-						      	field="table_name"
-						      	show-overflow
-						      	title="元数据">
-						      </vxe-table-column>
-						      <vxe-table-column
-						      	field="where_attr" 
-						      	title="查询表达式"
-						      	show-overflow
-						      	:edit-render="{name: 'EditDownTextarea'}">
-						      </vxe-table-column>
-						      <vxe-table-column
-						      	field="interceptor" 
-						      	title="拦截器"
-						      	show-overflow
-						      	:edit-render="{name: 'EditDownTextarea'}">
-						      </vxe-table-column>
-						      <vxe-table-column
-						      	field="is_add" 
-						      	title="是否可新增">
-						      	<template slot-scope="scope">
-							        <el-switch
-									  v-model="scope.row.is_add"
-									  active-color="#13ce66"
-									  inactive-color="#ff4949"
-									  @change="changeObject(scope.row)">
-									</el-switch>
-							    </template>
-						      </vxe-table-column>
-						      <vxe-table-column
-						      	field="is_update" 
-						      	title="是否可修改">
-						      	<template slot-scope="scope">
-							        <el-switch
-									  v-model="scope.row.is_update"
-									  active-color="#13ce66"
-									  inactive-color="#ff4949"
-									  @change="changeObject(scope.row)">
-									</el-switch>
-							    </template>
-						      </vxe-table-column>
-						      <vxe-table-column
-						      	field="is_delete" 
-						      	title="是否可删除">
-						      	<template slot-scope="scope">
-							        <el-switch
-									  v-model="scope.row.is_delete"
-									  active-color="#13ce66"
-									  inactive-color="#ff4949"
-									  @change="changeObject(scope.row)">
-									</el-switch>
-							    </template>
-						      </vxe-table-column>
-						      <vxe-table-column
-						      	field="is_delete" 
-						      	title="是否拥有操作列">
-						      	<template slot-scope="scope">
-							        <el-switch
-									  v-model="scope.row.is_handle"
-									  active-color="#13ce66"
-									  inactive-color="#ff4949"
-									  @change="changeObject(scope.row)">
-									</el-switch>
-							    </template>
-						      </vxe-table-column>
-						      <vxe-table-column
-						      	field="handle_width" 
-						      	title="操作列宽度"
-						      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
-						      </vxe-table-column>
-						      <vxe-table-column
-							      title="操作"
-							      width="210">
-							      <template slot-scope="scope">
-							      	<el-button size="mini" type="primary" @click="update(scope.row)">更新</el-button>
-							      	<el-button size="mini" type="success" @click="copy(scope.row)">复制</el-button>
-							        <el-button size="mini" type="danger" @click="del(scope.row)" icon="el-icon-delete"></el-button>
-							      </template>
-							    </vxe-table-column>
-						    </vxe-table>
-						  </template>
-						  <!-- <div class="block" style="float:right;margin-top:10px">
-						    <el-pagination
-						      @current-change="handleCurrentChange"
-						      :current-page.sync="currentPage"
-						      :page-size="pageSize"
-						      layout="prev, pager, next, jumper"
-						      :page-count="totalPage">
-						    </el-pagination>
-						  </div> -->
-					</el-row>
-					<el-row>
-			  			<template>
-			  				<el-tabs v-model="activeName">
-							    <el-tab-pane name="field">
-							    	<span slot="label">
-										字段管理
-								        <el-badge :value="fields.length" class="item"></el-badge>
-								    </span>
-								    <vxe-button status="primary" @click="addFieldInit">添加虚拟字段</vxe-button>
-								    &nbsp;&nbsp;Tip:虚拟字段背景为黄色
-							    	<vxe-table ref="fieldTable" :data="fields" :key="Math.random()" :border="true" stripe size="mini" :height="fullHeight-444"
-								    :edit-config="{trigger: 'dblclick', mode: 'row'}"
-								    :row-style="rowStyle"
-								    @edit-closed="editClosedEvent" style="width: 100%;margin-top:10px">
-								      <vxe-table-column
-								      	field="order_num" 
-								      	title="排序"
-								      	width="80"
-								      	:edit-render="{name: '$input', props: {type: 'number'}}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="en" 
-								      	show-overflow
-								      	title="字段名">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="cn" 
-								      	show-overflow
-								      	title="中文名"
-								      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="width" 
-								      	show-overflow
-								      	title="控件宽度"
-								      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="align" 
-								      	show-overflow
-								      	title="排列"
-								      	:edit-render="{name: '$select', options: alignList, optionProps: {value: 'value', label: 'label'}}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="type" 
-								      	show-overflow
-								      	title="控件"
-								      	:edit-render="{name: '$select', options: typeList, optionProps: {value: 'value', label: 'label'}}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="type_config" 
-								      	show-overflow
-								      	title="控件配置"
-								      	:edit-render="{name: 'EditDownTextarea'}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="formatter" 
-								      	show-overflow
-								      	title="格式化"
-								      	:edit-render="{name: 'EditDownTextarea'}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="validator" 
-								      	show-overflow
-								      	title="表单验证"
-								      	:edit-render="{name: 'EditDownTextarea'}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="fictitious_sql" 
-								      	show-overflow
-								      	width="120"
-								      	title="虚拟字段来源"
-								      	:edit-render="{name: 'EditDownTextarea'}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="is_show" 
-								      	title="是否显示">
-								      	<template slot-scope="scope">
-									        <el-switch
-											  v-model="scope.row.is_show"
-											  active-color="#13ce66"
-											  inactive-color="#ff4949"
-											  @change="switchChange(scope.row)">
-											</el-switch>
-									    </template>
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="is_query" 
-								      	title="是否可查询">
-								      	<template slot-scope="scope">
-									        <el-switch
-											  v-model="scope.row.is_query"
-											  active-color="#13ce66"
-											  inactive-color="#ff4949"
-											  @change="switchChange(scope.row)">
-											</el-switch>
-									    </template>
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="is_add" 
-								      	title="是否可新增">
-								      	<template slot-scope="scope">
-									        <el-switch
-									          v-if="!scope.row.is_fictitious"
-											  v-model="scope.row.is_add"
-											  active-color="#13ce66"
-											  inactive-color="#ff4949"
-											  @change="switchChange(scope.row)">
-											</el-switch>
-									    </template>
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="is_update" 
-								      	title="是否可修改">
-								      	<template slot-scope="scope">
-									        <el-switch
-									          v-if="!scope.row.is_fictitious"
-											  v-model="scope.row.is_update"
-											  active-color="#13ce66"
-											  inactive-color="#ff4949"
-											  @change="switchChange(scope.row)">
-											</el-switch>
-									    </template>
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="is_order" 
-								      	title="是否排序">
-								      	<template slot-scope="scope">
-									        <el-switch
-											  v-model="scope.row.is_order"
-											  active-color="#13ce66"
-											  inactive-color="#ff4949"
-											  @change="switchChange(scope.row)">
-											</el-switch>
-									    </template>
-								      </vxe-table-column>
-								      <vxe-table-column
-									      title="操作"
-									      width="80">
-									      <template slot-scope="scope">
-									        <el-button size="small" type="danger" @click="delField(scope.row)" icon="el-icon-delete"></el-button>
-									      </template>
-									    </vxe-table-column>
-								    </vxe-table>
-							    </el-tab-pane>
-							    <el-tab-pane name="button">
-							    	<span slot="label">
-										按钮管理
-								        <el-badge :value="buttons.length" class="item"></el-badge>
-								    </span>
-							    	<vxe-button status="primary" @click="addButtonInit">添加按钮</vxe-button>
-							    	<vxe-table ref="buttonTable" :data="buttons" :key="Math.random()" :border="true" stripe size="mini" :height="fullHeight-444"
-								    :edit-config="{trigger: 'dblclick', mode: 'row'}"
-								    @edit-closed="editBClosedEvent" style="width: 100%;margin-top:10px">
-								      <vxe-table-column
-								      	field="order_num" 
-								      	title="排序"
-								      	width="80"
-								      	:edit-render="{name: '$input', props: {type: 'number'}}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="location" 
-								      	title="按钮位置"
-								      	:edit-render="{name: '$select', options: locationList, optionProps: {value: 'value', label: 'label'}}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="type" 
-								      	title="按钮类型"
-								      	:edit-render="{name: '$select', options: bTypeList, optionProps: {value: 'value', label: 'label'}}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="icon" 
-								      	title="图标"
-								      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="color" 
-								      	title="按钮颜色"
-								      	:edit-render="{name: '$select', options: colorList, optionProps: {value: 'value', label: 'label'}}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="name" 
-								      	title="按钮名字"
-								      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="tip" 
-								      	show-overflow
-								      	width="120"
-								      	title="按钮提示信息"
-								      	:edit-render="{name: 'EditDownTextarea'}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="action" 
-								      	show-overflow
-								      	width="150"
-								      	title="按钮访问后端action"
-								      	:edit-render="{name: 'EditDownTextarea'}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="dialog_title" 
-								      	show-overflow
-								      	title="dialog标题"
-								      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="dialog_width" 
-								      	show-overflow
-								      	title="dialog宽度"
-								      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="dialog_height" 
-								      	show-overflow
-								      	title="dialog高度"
-								      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="dialog_src" 
-								      	show-overflow
-								      	title="dialog地址"
-								      	:edit-render="{name: 'EditDownTextarea'}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="auth_role" 
-								      	show-overflow
-								      	width="140"
-								      	title="角色标识权限集合"
-								      	:edit-render="{name: 'EditDownTextarea'}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="auth_row" 
-								      	show-overflow
-								      	title="行内权限"
-								      	:edit-render="{name: 'EditDownTextarea'}">
-								      </vxe-table-column>
-								      <vxe-table-column
-								      	field="is_show" 
-								      	title="是否显示">
-								      	<template slot-scope="scope">
-									        <el-switch
-											  v-model="scope.row.is_show"
-											  active-color="#13ce66"
-											  inactive-color="#ff4949"
-											  @change="switchChangeButton(scope.row)">
-											</el-switch>
-									    </template>
-								      </vxe-table-column>
-								      <vxe-table-column
-									      title="操作"
-									      width="80">
-									      <template slot-scope="scope">
-									        <el-button size="small" type="danger" @click="delButton(scope.row)" icon="el-icon-delete"></el-button>
-									      </template>
-									    </vxe-table-column>
-								    </vxe-table>
-							    </el-tab-pane>
-						  	</el-tabs>
-						  </template>
-					</el-row>
+	  			<el-card class="box-card" >
+	  				<div :style="'height:'+split_height+'px'">
+	  					<Split v-model="split" mode="vertical" on-moving="split_change">
+				            <div slot="top" class="demo-split-pane">
+								<el-row>
+						  			<template>
+									    <vxe-grid :data="objects" 
+									    :edit-config="{trigger: 'dblclick', mode: 'row'}"
+									    :toolbar="tableToolbar"
+									    @edit-closed="editEvent" :highlight-current-row="true" :border="true" @current-change="getFieldsAndButtons" size="mini" :height="parent_height" style="width: 100%">
+									    <template v-slot:toolbar_buttons>
+									    	<el-button type="primary" @click="addInit" style="margin-left:10px" size="mini">新建模型</el-button>
+								          </template>
+									      <vxe-table-column
+									      	field="id" 
+									      	title="ID">
+									      </vxe-table-column>
+									      <vxe-table-column
+									      	field="en" 
+									      	title="标识"
+									      	show-overflow
+									      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
+									      </vxe-table-column>
+									      <vxe-table-column
+									      	field="cn" 
+									      	title="对象"
+									      	show-overflow
+									      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
+									      </vxe-table-column>
+									      <vxe-table-column
+									      	field="table_name"
+									      	show-overflow
+									      	title="元数据">
+									      </vxe-table-column>
+									      <vxe-table-column
+									      	field="where_attr" 
+									      	title="查询表达式"
+									      	show-overflow
+									      	:edit-render="{name: 'EditDownTextarea'}">
+									      </vxe-table-column>
+									      <vxe-table-column
+									      	field="interceptor" 
+									      	title="拦截器"
+									      	show-overflow
+									      	:edit-render="{name: 'EditDownTextarea'}">
+									      </vxe-table-column>
+									      <vxe-table-column
+									      	field="is_add" 
+									      	title="是否可新增">
+									      	<template slot-scope="scope">
+										        <el-switch
+												  v-model="scope.row.is_add"
+												  active-color="#13ce66"
+												  inactive-color="#ff4949"
+												  @change="changeObject(scope.row)">
+												</el-switch>
+										    </template>
+									      </vxe-table-column>
+									      <vxe-table-column
+									      	field="is_update" 
+									      	title="是否可修改">
+									      	<template slot-scope="scope">
+										        <el-switch
+												  v-model="scope.row.is_update"
+												  active-color="#13ce66"
+												  inactive-color="#ff4949"
+												  @change="changeObject(scope.row)">
+												</el-switch>
+										    </template>
+									      </vxe-table-column>
+									      <vxe-table-column
+									      	field="is_delete" 
+									      	title="是否可删除">
+									      	<template slot-scope="scope">
+										        <el-switch
+												  v-model="scope.row.is_delete"
+												  active-color="#13ce66"
+												  inactive-color="#ff4949"
+												  @change="changeObject(scope.row)">
+												</el-switch>
+										    </template>
+									      </vxe-table-column>
+									      <vxe-table-column
+									      	field="is_delete" 
+									      	title="是否拥有操作列">
+									      	<template slot-scope="scope">
+										        <el-switch
+												  v-model="scope.row.is_handle"
+												  active-color="#13ce66"
+												  inactive-color="#ff4949"
+												  @change="changeObject(scope.row)">
+												</el-switch>
+										    </template>
+									      </vxe-table-column>
+									      <vxe-table-column
+									      	field="handle_width" 
+									      	title="操作列宽度"
+									      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
+									      </vxe-table-column>
+									      <vxe-table-column
+										      title="操作"
+										      width="210">
+										      <template slot-scope="scope">
+										      	<el-button size="mini" type="primary" @click="update(scope.row)">更新</el-button>
+										      	<el-button size="mini" type="success" @click="copy(scope.row)">复制</el-button>
+										        <el-button size="mini" type="danger" @click="del(scope.row)" icon="el-icon-delete"></el-button>
+										      </template>
+										    </vxe-table-column>
+									    </vxe-grid>
+									  </template>
+									  <!-- <div class="block" style="float:right;margin-top:10px">
+									    <el-pagination
+									      @current-change="handleCurrentChange"
+									      :current-page.sync="currentPage"
+									      :page-size="pageSize"
+									      layout="prev, pager, next, jumper"
+									      :page-count="totalPage">
+									    </el-pagination>
+									  </div> -->
+								</el-row>
+							</div>
+							<div slot="bottom" class="demo-split-pane">
+								<el-row style="margin-top:5px">
+						  			<template>
+						  				<el-tabs v-model="activeName">
+										    <el-tab-pane name="field">
+										    	<span slot="label">
+													字段管理
+											        <el-badge :value="fields.length" class="item"></el-badge>
+											    </span>
+											    <vxe-button status="primary" @click="addFieldInit">添加虚拟字段</vxe-button>
+											    &nbsp;&nbsp;Tip:虚拟字段背景为黄色
+										    	<vxe-table ref="fieldTable" :data="fields" :key="Math.random()" :border="true" stripe size="mini" :height="son_height-100"
+											    :edit-config="{trigger: 'dblclick', mode: 'row'}"
+											    :row-style="rowStyle"
+											    @edit-closed="editClosedEvent" style="width: 100%;margin-top:10px">
+											      <vxe-table-column
+											      	field="order_num" 
+											      	title="排序"
+											      	width="80"
+											      	:edit-render="{name: '$input', props: {type: 'number'}}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="en" 
+											      	show-overflow
+											      	title="字段名">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="cn" 
+											      	show-overflow
+											      	title="中文名"
+											      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="width" 
+											      	show-overflow
+											      	title="控件宽度"
+											      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="align" 
+											      	show-overflow
+											      	title="排列"
+											      	:edit-render="{name: '$select', options: alignList, optionProps: {value: 'value', label: 'label'}}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="type" 
+											      	show-overflow
+											      	title="控件"
+											      	:edit-render="{name: '$select', options: typeList, optionProps: {value: 'value', label: 'label'}}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="type_config" 
+											      	show-overflow
+											      	title="控件配置"
+											      	:edit-render="{name: 'EditDownTextarea'}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="formatter" 
+											      	show-overflow
+											      	title="格式化"
+											      	:edit-render="{name: 'EditDownTextarea'}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="validator" 
+											      	show-overflow
+											      	title="表单验证"
+											      	:edit-render="{name: 'EditDownTextarea'}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="fictitious_sql" 
+											      	show-overflow
+											      	width="120"
+											      	title="虚拟字段来源"
+											      	:edit-render="{name: 'EditDownTextarea'}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="is_show" 
+											      	title="是否显示">
+											      	<template slot-scope="scope">
+												        <el-switch
+														  v-model="scope.row.is_show"
+														  active-color="#13ce66"
+														  inactive-color="#ff4949"
+														  @change="switchChange(scope.row)">
+														</el-switch>
+												    </template>
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="is_query" 
+											      	title="是否可查询">
+											      	<template slot-scope="scope">
+												        <el-switch
+														  v-model="scope.row.is_query"
+														  active-color="#13ce66"
+														  inactive-color="#ff4949"
+														  @change="switchChange(scope.row)">
+														</el-switch>
+												    </template>
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="is_add" 
+											      	title="是否可新增">
+											      	<template slot-scope="scope">
+												        <el-switch
+												          v-if="!scope.row.is_fictitious"
+														  v-model="scope.row.is_add"
+														  active-color="#13ce66"
+														  inactive-color="#ff4949"
+														  @change="switchChange(scope.row)">
+														</el-switch>
+												    </template>
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="is_update" 
+											      	title="是否可修改">
+											      	<template slot-scope="scope">
+												        <el-switch
+												          v-if="!scope.row.is_fictitious"
+														  v-model="scope.row.is_update"
+														  active-color="#13ce66"
+														  inactive-color="#ff4949"
+														  @change="switchChange(scope.row)">
+														</el-switch>
+												    </template>
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="update_validate" 
+											      	show-overflow
+											      	width="120"
+											      	title="行内修改权限"
+											      	:edit-render="{name: 'EditDownTextarea'}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="is_order" 
+											      	title="是否排序">
+											      	<template slot-scope="scope">
+												        <el-switch
+														  v-model="scope.row.is_order"
+														  active-color="#13ce66"
+														  inactive-color="#ff4949"
+														  @change="switchChange(scope.row)">
+														</el-switch>
+												    </template>
+											      </vxe-table-column>
+											      <vxe-table-column
+												      title="操作"
+												      width="80">
+												      <template slot-scope="scope">
+												        <el-button size="small" type="danger" @click="delField(scope.row)" icon="el-icon-delete"></el-button>
+												      </template>
+												    </vxe-table-column>
+											    </vxe-table>
+										    </el-tab-pane>
+										    <el-tab-pane name="button">
+										    	<span slot="label">
+													按钮管理
+											        <el-badge :value="buttons.length" class="item"></el-badge>
+											    </span>
+										    	<vxe-button status="primary" @click="addButtonInit">添加按钮</vxe-button>
+										    	<vxe-table ref="buttonTable" :data="buttons" :key="Math.random()" :border="true" stripe size="mini" :height="son_height-100"
+											    :edit-config="{trigger: 'dblclick', mode: 'row'}"
+											    @edit-closed="editBClosedEvent" style="width: 100%;margin-top:10px">
+											      <vxe-table-column
+											      	field="order_num" 
+											      	title="排序"
+											      	width="80"
+											      	:edit-render="{name: '$input', props: {type: 'number'}}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="location" 
+											      	title="按钮位置"
+											      	:edit-render="{name: '$select', options: locationList, optionProps: {value: 'value', label: 'label'}}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="type" 
+											      	title="按钮类型"
+											      	:edit-render="{name: '$select', options: bTypeList, optionProps: {value: 'value', label: 'label'}}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="icon" 
+											      	title="图标"
+											      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="color" 
+											      	title="按钮颜色"
+											      	:edit-render="{name: '$select', options: colorList, optionProps: {value: 'value', label: 'label'}}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="name" 
+											      	title="按钮名字"
+											      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="tip" 
+											      	show-overflow
+											      	width="120"
+											      	title="按钮提示信息"
+											      	:edit-render="{name: 'EditDownTextarea'}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="action" 
+											      	show-overflow
+											      	width="150"
+											      	title="按钮访问后端action"
+											      	:edit-render="{name: 'EditDownTextarea'}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="dialog_title" 
+											      	show-overflow
+											      	title="dialog标题"
+											      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="dialog_width" 
+											      	show-overflow
+											      	title="dialog宽度"
+											      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="dialog_height" 
+											      	show-overflow
+											      	title="dialog高度"
+											      	:edit-render="{name: 'input', immediate: true, attrs: {type: 'text'}}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="dialog_src" 
+											      	show-overflow
+											      	title="dialog地址"
+											      	:edit-render="{name: 'EditDownTextarea'}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="auth_role" 
+											      	show-overflow
+											      	width="140"
+											      	title="角色标识权限集合"
+											      	:edit-render="{name: 'EditDownTextarea'}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="auth_row" 
+											      	show-overflow
+											      	title="行内权限"
+											      	:edit-render="{name: 'EditDownTextarea'}">
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="is_show" 
+											      	title="是否显示">
+											      	<template slot-scope="scope">
+												        <el-switch
+														  v-model="scope.row.is_show"
+														  active-color="#13ce66"
+														  inactive-color="#ff4949"
+														  @change="switchChangeButton(scope.row)">
+														</el-switch>
+												    </template>
+											      </vxe-table-column>
+											      <vxe-table-column
+												      title="操作"
+												      width="80">
+												      <template slot-scope="scope">
+												        <el-button size="small" type="danger" @click="delButton(scope.row)" icon="el-icon-delete"></el-button>
+												      </template>
+												    </vxe-table-column>
+											    </vxe-table>
+										    </el-tab-pane>
+									  	</el-tabs>
+									  </template>
+								</el-row>
+							</div>
+						</Split>
+					</div>
 					<el-dialog :title="dialogTitle" width="450px" :before-close="handleClose" :visible.sync="dialogVisible" :with-header="true">
 					  <el-form ref="form" :form="form" label-width="80px">
 				  		<el-form-item label="标识" :label-width="formLabelWidth">
@@ -550,6 +566,11 @@
 		</el-container>
 	</div>
 <script>
+
+//窗口变化
+window.onresize=function(){  
+	this.app.fullHeight = document.documentElement.clientHeight; //窗口高度
+}
 	  
 	  var app = new Vue({
 		  el: '#app',
@@ -560,6 +581,10 @@
 			  tables:[],
 			  buttons:[],
 			  form:{},
+			  split:0.4,
+			  split_height:0,
+		      parent_height:0,
+		      son_height:0,
 			  activeName: 'field',
 			  typeList:[
 				  {value:'input',label:'输入框'},
@@ -597,10 +622,21 @@
 			  buttonDialogFormVisible:false,
 			  fieldDialogFormVisible:false,
 		      formLabelWidth: '110px',
-		      fullHeight: document.documentElement.clientHeight-85,
+		      fullHeight: document.documentElement.clientHeight,
 		      currentPage:1,
 		      totalPage:0,
 		      pageSize:20,
+		      tableToolbar: {
+		          slots: {
+		            buttons: 'toolbar_buttons'
+		          },
+		          refresh: true,
+		          export: true,
+		          print: true,
+		          zoom: true,
+		          custom: true,
+		          perfect:true
+		      },
 		      rules: {
 		          order_num: [{
 		            required: true,
@@ -643,9 +679,28 @@
 		        },
 		  },
 		  created: function () {
-			  this.user_roles = '#(session.user_roles)';
+			  this.user_roles = '#(session.user.roles)';
 			  this.getObjects();
 			  this.getTables();
+		  },
+		  watch:{
+			  objects:function(){
+				  this.$nextTick(()=>{ // 页面渲染完成后的回调
+					  this.split_height=this.fullHeight-85;
+				      this.parent_height=this.split_height*this.split;
+				      this.son_height=this.split_height*(1-this.split);
+				  });
+			  },
+			  fullHeight:function(){
+				  this.split_height=this.fullHeight-85;
+			      this.parent_height=this.split_height*this.split;
+			      this.son_height=this.split_height*(1-this.split);
+			  },
+			  split:function(){
+				  this.split_height=this.fullHeight-85;
+			      this.parent_height=this.split_height*this.split;
+			      this.son_height=this.split_height*(1-this.split);
+			  }
 		  },
 		  methods: {
 			  getObjects: function (event) {

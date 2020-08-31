@@ -93,6 +93,7 @@ Vue.component("add-form",{
 		              if (valid) {
 		            	  this.$parent.onSubmit(_this.form,_this.fileList);
 		            	  this.form = {};
+		            	  this.fileList = [];
 		              } else {
 		            	  console.log('error submit!!');
 		                  return false;
@@ -115,6 +116,7 @@ Vue.component("add-form",{
 		          this.$confirm('确认关闭？')
 		            .then(_ => {
 		            	this.form = {};
+		            	this.fileList = [];
 		            	this.$parent.addDialogVisible = false;
 		            	this.$parent.parentDialogVisible = false;
 		            	this.$parent.sonDialogVisible = false;
@@ -123,6 +125,7 @@ Vue.component("add-form",{
 	          },
 	          close() {
 	        	  this.form = {};
+	        	  this.fileList = [];
 	            	this.$parent.addDialogVisible = false;
 	            	this.$parent.parentDialogVisible = false;
 	            	this.$parent.sonDialogVisible = false;
