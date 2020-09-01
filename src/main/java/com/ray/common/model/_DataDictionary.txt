@@ -12,7 +12,8 @@ Table: data_button
  color          | VARCHAR(255) | YES  |     |         | 按钮样式    
  tip            | TEXT(65535)  | NO   |     |         | 按钮提示信息  
  dialog_title   | VARCHAR(255) | YES  |     |         | dialog标题
- dialog_width   | VARCHAR(255) | YES  |     |         | dialog宽度
+ dialog_width   | VARCHAR(255) | YES  |     | 600px   | dialog宽度
+ dialog_height  | VARCHAR(255) | YES  |     | 50%     | dialog高度
  dialog_src     | VARCHAR(255) | YES  |     |         | dialog地址
  action         | VARCHAR(255) | NO   |     |         | 按钮访问后端action
  auth_role      | VARCHAR(255) | YES  |     |         | 角色标识权限集合
@@ -21,61 +22,64 @@ Table: data_button
 ----------------+--------------+------+-----+---------+---------
 
 Table: data_field
-----------------+---------------+------+-----+---------+---------
- Field          | Type          | Null | Key | Default | Remarks 
-----------------+---------------+------+-----+---------+---------
- id             | INT(10)       | NO   | PRI |         | ID      
- data_object_id | INT(10)       | NO   |     |         | object_id
- order_num      | INT(10)       | NO   |     |         | 排序索引    
- en             | VARCHAR(50)   | NO   |     |         | 英文名     
- cn             | VARCHAR(50)   | NO   |     |         | 中文名     
- is_auto        | BIT           | YES  |     | 0       | 主键是否自增长 
- type           | VARCHAR(10)   | YES  |     | input   | 控件类型    
- type_config    | VARCHAR(2000) | YES  |     |         | 控件配置    
- align          | VARCHAR(10)   | YES  |     | center  | 排列      
- is_query       | BIT           | YES  |     | 0       | 是否可查询   
- is_show        | BIT           | YES  |     | 1       | 是否可显示   
- is_disable     | BIT           | YES  |     | 0       | 是否禁用    
- is_order       | BIT           | YES  |     | 1       | 是否可排序   
- is_add         | BIT           | YES  |     | 1       | 是否可新增   
- is_update      | BIT           | YES  |     | 1       | 是否可修改   
- is_edit        | BIT           | YES  |     | 1       | 是否可编辑   
- is_required    | BIT           | YES  |     | 1       | 是否必填    
- is_multiple    | BIT           | YES  |     | 0       | 是否多选项   
- is_fictitious  | BIT           | YES  |     | 0       | 是否虚拟字段  
- fictitious_sql | VARCHAR(255)  | YES  |     |         | 虚拟字段来源sql
- placeholder    | VARCHAR(255)  | YES  |     |         | 输入提示    
- formatter      | TEXT(65535)   | YES  |     |         | 格式化     
- validator      | TEXT(65535)   | YES  |     |         | UI校验表达式 
- defaulter      | VARCHAR(255)  | YES  |     |         | 默认值表达式  
- width          | INT(10)       | YES  |     |         | 控件宽度    
- height         | INT(10)       | YES  |     | 20      | 控件高度    
- config         | VARCHAR(2000) | YES  |     |         | 配置      
- add_status     | INT(10)       | YES  |     | 0       | 状态：0=正常，10=只读，20=隐藏，50=禁用
- update_status  | INT(10)       | YES  |     | 0       | 状态：0=正常，10=只读，20=隐藏，50=禁用
- data_type      | INT(10)       | YES  |     | 12      | 数据类型    
- data_type_name | VARCHAR(20)   | YES  |     | VARCHAR | 数据类型名称  
- data_size      | INT(10)       | YES  |     | 1       | 整数位长度   
- data_decimal   | INT(10)       | YES  |     | 0       | 小数位长度   
-----------------+---------------+------+-----+---------+---------
+-----------------+---------------+------+-----+---------+---------
+ Field           | Type          | Null | Key | Default | Remarks 
+-----------------+---------------+------+-----+---------+---------
+ id              | INT(10)       | NO   | PRI |         | ID      
+ data_object_id  | INT(10)       | NO   |     |         | object_id
+ order_num       | INT(10)       | NO   |     |         | 排序索引    
+ en              | VARCHAR(50)   | NO   |     |         | 英文名     
+ cn              | VARCHAR(50)   | NO   |     |         | 中文名     
+ is_auto         | BIT           | YES  |     | 0       | 主键是否自增长 
+ type            | VARCHAR(10)   | YES  |     | input   | 控件类型    
+ type_config     | VARCHAR(2000) | YES  |     |         | 控件配置    
+ align           | VARCHAR(10)   | YES  |     | center  | 排列      
+ is_query        | BIT           | YES  |     | 0       | 是否可查询   
+ is_show         | BIT           | YES  |     | 1       | 是否可显示   
+ is_disable      | BIT           | YES  |     | 0       | 是否禁用    
+ is_order        | BIT           | YES  |     | 1       | 是否可排序   
+ is_add          | BIT           | YES  |     | 1       | 是否可新增   
+ is_update       | BIT           | YES  |     | 1       | 是否可修改   
+ is_line_update  | BIT           | YES  |     | 1       | 是否可行内修改 
+ update_validate | VARCHAR(255)  | YES  |     |         | 是否可修改数据校验
+ is_edit         | BIT           | YES  |     | 1       | 是否可编辑   
+ is_required     | BIT           | YES  |     | 1       | 是否必填    
+ is_multiple     | BIT           | YES  |     | 0       | 是否多选项   
+ is_fictitious   | BIT           | YES  |     | 0       | 是否虚拟字段  
+ fictitious_sql  | VARCHAR(255)  | YES  |     |         | 虚拟字段来源sql
+ placeholder     | VARCHAR(255)  | YES  |     |         | 输入提示    
+ formatter       | TEXT(65535)   | YES  |     |         | 格式化     
+ validator       | TEXT(65535)   | YES  |     |         | UI校验表达式 
+ defaulter       | VARCHAR(255)  | YES  |     |         | 默认值表达式  
+ width           | INT(10)       | YES  |     |         | 控件宽度    
+ height          | INT(10)       | YES  |     | 20      | 控件高度    
+ config          | VARCHAR(2000) | YES  |     |         | 配置      
+ add_status      | INT(10)       | YES  |     | 0       | 状态：0=正常，10=只读，20=隐藏，50=禁用
+ update_status   | INT(10)       | YES  |     | 0       | 状态：0=正常，10=只读，20=隐藏，50=禁用
+ data_type       | INT(10)       | YES  |     | 12      | 数据类型    
+ data_type_name  | VARCHAR(20)   | YES  |     | VARCHAR | 数据类型名称  
+ data_size       | INT(10)       | YES  |     | 1       | 整数位长度   
+ data_decimal    | INT(10)       | YES  |     | 0       | 小数位长度   
+-----------------+---------------+------+-----+---------+---------
 
 Table: data_object
---------------+--------------+------+-----+-------------------+---------
- Field        | Type         | Null | Key | Default           | Remarks 
---------------+--------------+------+-----+-------------------+---------
- id           | INT(10)      | NO   | PRI |                   | ID      
- table_name   | VARCHAR(255) | NO   |     |                   | 表名      
- en           | VARCHAR(255) | NO   |     |                   | 英文编码    
- cn           | VARCHAR(255) | NO   |     |                   | 中文名     
- where_attr   | VARCHAR(255) | YES  |     |                   | 查询表达式   
- interceptor  | VARCHAR(255) | YES  |     |                   | 拦截器     
- is_add       | BIT          | NO   |     | 1                 | 是否新增    
- is_update    | BIT          | NO   |     | 1                 | 是否修改    
- is_delete    | BIT          | NO   |     | 1                 | 是否删除    
- is_handle    | BIT          | NO   |     | 1                 | 是否拥有操作列 
- handle_width | VARCHAR(255) | YES  |     | 60                | 操作列宽度   
- create_time  | DATETIME(19) | NO   |     | CURRENT_TIMESTAMP | 创建时间    
---------------+--------------+------+-----+-------------------+---------
+----------------+--------------+------+-----+-------------------+---------
+ Field          | Type         | Null | Key | Default           | Remarks 
+----------------+--------------+------+-----+-------------------+---------
+ id             | INT(10)      | NO   | PRI |                   | ID      
+ table_name     | VARCHAR(255) | NO   |     |                   | 表名      
+ en             | VARCHAR(255) | NO   |     |                   | 英文编码    
+ cn             | VARCHAR(255) | NO   |     |                   | 中文名     
+ where_attr     | VARCHAR(255) | YES  |     |                   | 查询表达式   
+ interceptor    | VARCHAR(255) | YES  |     |                   | 拦截器     
+ is_add         | BIT          | NO   |     | 1                 | 是否新增    
+ is_update      | BIT          | NO   |     | 1                 | 是否修改    
+ is_line_update | BIT          | NO   |     | 1                 | 是否可行内修改 
+ is_delete      | BIT          | NO   |     | 1                 | 是否删除    
+ is_handle      | BIT          | NO   |     | 1                 | 是否拥有操作列 
+ handle_width   | VARCHAR(255) | YES  |     | 60                | 操作列宽度   
+ create_time    | DATETIME(19) | NO   |     | CURRENT_TIMESTAMP | 创建时间    
+----------------+--------------+------+-----+-------------------+---------
 
 Table: data_task
 -------+--------------+------+-----+---------+---------

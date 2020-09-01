@@ -88,6 +88,18 @@
 										    </template>
 									      </vxe-table-column>
 									      <vxe-table-column
+									      	field="is_update" 
+									      	title="是否行内修改">
+									      	<template slot-scope="scope">
+										        <el-switch
+												  v-model="scope.row.is_line_update"
+												  active-color="#13ce66"
+												  inactive-color="#ff4949"
+												  @change="changeObject(scope.row)">
+												</el-switch>
+										    </template>
+									      </vxe-table-column>
+									      <vxe-table-column
 									      	field="is_delete" 
 									      	title="是否可删除">
 									      	<template slot-scope="scope">
@@ -257,6 +269,19 @@
 												        <el-switch
 												          v-if="!scope.row.is_fictitious"
 														  v-model="scope.row.is_update"
+														  active-color="#13ce66"
+														  inactive-color="#ff4949"
+														  @change="switchChange(scope.row)">
+														</el-switch>
+												    </template>
+											      </vxe-table-column>
+											      <vxe-table-column
+											      	field="is_update" 
+											      	title="行内修改">
+											      	<template slot-scope="scope">
+												        <el-switch
+												          v-if="!scope.row.is_fictitious"
+														  v-model="scope.row.is_line_update"
 														  active-color="#13ce66"
 														  inactive-color="#ff4949"
 														  @change="switchChange(scope.row)">

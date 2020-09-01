@@ -235,6 +235,36 @@ public abstract class BaseDataField<M extends BaseDataField<M>> extends Model<M>
 	}
 
 	/**
+	 * 是否可行内修改
+	 */
+	public M setIsLineUpdate(java.lang.Boolean isLineUpdate) {
+		set("is_line_update", isLineUpdate);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否可行内修改
+	 */
+	public java.lang.Boolean getIsLineUpdate() {
+		return getBoolean("is_line_update");
+	}
+
+	/**
+	 * 是否可修改数据校验
+	 */
+	public M setUpdateValidate(java.lang.String updateValidate) {
+		set("update_validate", updateValidate);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否可修改数据校验
+	 */
+	public java.lang.String getUpdateValidate() {
+		return getStr("update_validate");
+	}
+
+	/**
 	 * 是否可编辑
 	 */
 	public M setIsEdit(java.lang.Boolean isEdit) {

@@ -175,6 +175,21 @@ public abstract class BaseDataButton<M extends BaseDataButton<M>> extends Model<
 	}
 
 	/**
+	 * dialog高度
+	 */
+	public M setDialogHeight(java.lang.String dialogHeight) {
+		set("dialog_height", dialogHeight);
+		return (M)this;
+	}
+	
+	/**
+	 * dialog高度
+	 */
+	public java.lang.String getDialogHeight() {
+		return getStr("dialog_height");
+	}
+
+	/**
 	 * dialog地址
 	 */
 	public M setDialogSrc(java.lang.String dialogSrc) {

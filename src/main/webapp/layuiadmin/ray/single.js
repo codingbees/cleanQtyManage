@@ -5,11 +5,11 @@ window.dd = window.parent.dd;
 window.dd.error(function(err) {
     alert('dd error: ' + JSON.stringify(err));
 })
-//窗口变化
+// 窗口变化
 window.onresize=function(){  
-	this.app.fullHeight = document.documentElement.clientHeight; //窗口高度
+	this.app.fullHeight = document.documentElement.clientHeight; // 窗口高度
 }
-//获取参数
+// 获取参数
 function getQueryString(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
     var r = window.location.search.substr(1).match(reg);
@@ -19,18 +19,18 @@ function getQueryString(name) {
     return '';
 }
 
-//弹出框
+// 弹出框
 var tempDialog;
 
 layui.config({
-    base: '/layuiadmin/' //静态资源所在路径
+    base: '/layuiadmin/' // 静态资源所在路径
   }).extend({
-    index: 'lib/index' //主入口模块
+    index: 'lib/index' // 主入口模块
   }).use(['index'],function(){
 	  var $ = layui.$;
   }); 
 
-//初始化data
+// 初始化data
 function buildData(custom_data) {
   return Object.assign({
 	  menu_id:getQueryString('id'),
@@ -46,6 +46,7 @@ function buildData(custom_data) {
 	  queryForm:{},
 	  inFileList:[],
 	  addDialogVisible: false,
+	  editDialogVisible: false,
 	  fileDialogVisible:false,
 	  dialogTitle:'',
       formLabelWidth: '120px',
@@ -88,10 +89,11 @@ function buildData(custom_data) {
 	  dialogHeight:'',
 	  file_edit:false,
 	  domin_url:'',
-	  fileList:[]
+	  fileList:[],
+	  edit_row:{}
   }, custom_data)
 }
-//初始化watch
+// 初始化watch
 function buildWatch(custom_watch){
 	return Object.assign({
 		fullHeight:function(){
@@ -110,7 +112,7 @@ function buildWatch(custom_watch){
 		}
 	})
 }
-//初始化methods
+// 初始化methods
 function buildMethods(custom_methods) {
   return Object.assign({
 	  getMenuInfo(){
@@ -195,8 +197,11 @@ function buildMethods(custom_methods) {
     		})
 	  },
 	  addInit:function(){
-    	this.dialogTitle='新增';
     	this.addDialogVisible = true;
+	  },
+	  editInit:function(row){
+		this.edit_row = row;
+    	this.editDialogVisible = true;
 	  },
       onSubmit:function(form,fileList){
     	  var _this = this;
@@ -222,7 +227,31 @@ function buildMethods(custom_methods) {
 			  	}
     		})
       },
-      //cell编辑
+      //弹窗修改
+      edit:function(form){
+    	  var _this = this;
+    	  axios({
+	    		method:"post",
+	    		url:"/single/edit",
+	    		params:{row:form,object_id:_this.menu.data_object_id}
+    		}).then((res)=>{
+		    	if(res.status==200){
+		    		if(res.data.state=="ok"){
+			    		_this.$message({
+		    		          message: res.data.msg,
+		    		          type: 'success'
+		    		        });
+			    		_this.editDialogVisible = false;
+			    		_this.query(_this.queryForm);
+				    }else{
+				    	this.$message.error(res.data.msg);
+					}
+			  	}else{
+			  		this.$message.error('网络请求失败');
+			  	}
+    		})
+      },
+      // cell编辑
 	  editClosedEvent ({ row, column }, event) {
 		  var _this = this;
 		  axios({
@@ -497,10 +526,11 @@ function buildMethods(custom_methods) {
 	  },
 	  lineButtonDialogClick(row,button){
 		    var _this = this;
-    		/*_this.buttonDialog = true;
-	    	_this.buttonDialogSrc = button.dialog_src;
-	    	_this.buttonDialogTitle = button.dialog_title;
-	    	_this.buttonDialogWidth = button.dialog_width;*/
+    		/*
+			 * _this.buttonDialog = true; _this.buttonDialogSrc =
+			 * button.dialog_src; _this.buttonDialogTitle = button.dialog_title;
+			 * _this.buttonDialogWidth = button.dialog_width;
+			 */
 	    	_this.dialogRow = row;
 	    	tempDialog = layer.open({
 		    	  type: 2,
@@ -587,10 +617,11 @@ function buildMethods(custom_methods) {
 	  headButtonDialogClick(button){
 	    var _this = this;
     	if(_this.select_rows.length>0){
-    		/*_this.buttonDialog = true;
-	    	_this.buttonDialogSrc = button.dialog_src;
-	    	_this.buttonDialogTitle = button.dialog_title;
-	    	_this.buttonDialogWidth = button.dialog_width;*/
+    		/*
+			 * _this.buttonDialog = true; _this.buttonDialogSrc =
+			 * button.dialog_src; _this.buttonDialogTitle = button.dialog_title;
+			 * _this.buttonDialogWidth = button.dialog_width;
+			 */
 	    	_this.dialogRows = _this.select_rows;
 	    	tempDialog = layer.open({
 		    	  type: 2,
@@ -609,58 +640,58 @@ function buildMethods(custom_methods) {
 	  },
 	  checkEvent ({ checked, records }) {
 		  this.select_rows = records
-            },
-            headButtonAuth:function(item){
-                if(item.auth_role!=null){
-					var roles = item.auth_role.split(",");
-					for(var i=0;i<roles.length;i++){
-						if(this.user_roles.indexOf(roles[i])!=-1){
-							return true;
-						}
-					}
-                }else{
-					return true;
-                }
-               	return false;
-            },
-            lineButtonAuth:function(item,row){
-                if(item.auth_role!=null){
-					var roles = item.auth_role.split(",");
-					for(var i=0;i<roles.length;i++){
-						if(this.user_roles.indexOf(roles[i])!=-1){
-							if(item.auth_row!=null){
-								var authrow = JSON.parse(item.auth_row);
-								for(var j = 0;j<authrow.length;j++){
-									for(let key  in row){
-								        if(key == authrow[j].field){
-									        var aaa = row[key]+authrow[j].operator+authrow[j].value;
-								        	if(!eval(aaa)){
-												return false;
-									        }
-									    }
-								    }
-								}
-							}
-							return true;
-						}
-					}
-                }else{
-              	  if(item.auth_row!=null){
-					var authrow = JSON.parse(item.auth_row);
-					for(var j = 0;j<authrow.length;j++){
-						for(let key  in row){
-					        if(key == authrow[j].field){
-						        var aaa = row[key]+authrow[j].operator+authrow[j].value;
-					        	if(!eval(aaa)){
-									return false;
-						        }
-						    }
-					    }
+      },
+        headButtonAuth:function(item){
+            if(item.auth_role!=null){
+				var roles = item.auth_role.split(",");
+				for(var i=0;i<roles.length;i++){
+					if(this.user_roles.indexOf(roles[i])!=-1){
+						return true;
 					}
 				}
-			  return true;
-                }
-                return false;
+            }else{
+				return true;
             }
+           	return false;
+        },
+        lineButtonAuth:function(item,row){
+            if(item.auth_role!=null){
+				var roles = item.auth_role.split(",");
+				for(var i=0;i<roles.length;i++){
+					if(this.user_roles.indexOf(roles[i])!=-1){
+						if(item.auth_row!=null){
+							var authrow = JSON.parse(item.auth_row);
+							for(var j = 0;j<authrow.length;j++){
+								for(let key  in row){
+							        if(key == authrow[j].field){
+								        var aaa = row[key]+authrow[j].operator+authrow[j].value;
+							        	if(!eval(aaa)){
+											return false;
+								        }
+								    }
+							    }
+							}
+						}
+						return true;
+					}
+				}
+            }else{
+          	  if(item.auth_row!=null){
+				var authrow = JSON.parse(item.auth_row);
+				for(var j = 0;j<authrow.length;j++){
+					for(let key  in row){
+				        if(key == authrow[j].field){
+					        var aaa = row[key]+authrow[j].operator+authrow[j].value;
+				        	if(!eval(aaa)){
+								return false;
+					        }
+					    }
+				    }
+				}
+			}
+		  return true;
+            }
+            return false;
+        }
   }, custom_methods)
 }

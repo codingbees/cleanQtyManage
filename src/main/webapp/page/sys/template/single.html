@@ -6,6 +6,7 @@
 <script src="/layuiadmin/main.js"></script>
 <script src="/layuiadmin/ray/queryForm.js"></script>
 <script src="/layuiadmin/ray/addForm.js"></script>
+<script src="/layuiadmin/ray/editForm.js"></script>
 </head>
 <body>
 	<div id="app" style="background-color: #F2F2F2">
@@ -48,7 +49,7 @@
 						      	:sortable="item.is_order"
 						      	show-overflow
 						      	show-header-overflow
-						      	v-bind="item.type!='file'?(item.is_update&&data_object.is_update?
+						      	v-bind="item.type!='file'?(item.is_line_update&&data_object.is_line_update?
 						      	(item.type=='input'?{'edit-render':{name: 'EditDownTextarea'}}:
 						      	 item.type=='select'||item.type=='radio'?{'edit-render':{name: '$select', options: selectList[index],optionProps: {value: 'value', label: 'label'}}}:
 						      	 item.type=='switch'?{'cell-render':{name: '$switch',events:{change:editClosedEvent}}}:
@@ -71,6 +72,7 @@
 							      fixed="right">
 							      <template slot-scope="scope">
 							      	<el-button v-for="item in lineButtons" :key="item.id" v-if="item.is_show&&lineButtonAuth(item,scope.row)" size="mini" :type="item.color" :icon="item.icon" @click="item.type==1?lineButtonConfirmClick(scope.row,item):item.type==2?lineButtonComboboxClick(scope.row,item):lineButtonDialogClick(scope.row,item)">{{item.name}}</el-button>
+							        <el-button type="primary" v-if="data_object.is_update" size="mini" icon="el-icon-edit" @click="editInit(scope.row)" circle></el-button>
 							        <el-button type="danger" v-if="data_object.is_delete" size="mini" icon="el-icon-delete" @click="del(scope.row)" circle></el-button>
 							      </template>
 							  </vxe-table-column>
@@ -115,6 +117,9 @@
 		<!-- 新增dialog -->
 		<add-form :params="{columns:columns,selectList:selectList,rules:rules,show:addDialogVisible}"></add-form>
 		<!-- 新增dialog -->
+		<!-- 编辑dialog -->
+		<edit-form :params="{columns:columns,selectList:selectList,rules:rules,show:editDialogVisible,row:edit_row}"></edit-form>
+		<!-- 编辑dialog -->
 	</div>
 <script src="/layuiadmin/ray/single.js"></script>
 <script>

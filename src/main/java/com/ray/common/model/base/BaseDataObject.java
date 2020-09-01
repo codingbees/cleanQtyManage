@@ -130,6 +130,21 @@ public abstract class BaseDataObject<M extends BaseDataObject<M>> extends Model<
 	}
 
 	/**
+	 * 是否可行内修改
+	 */
+	public M setIsLineUpdate(java.lang.Boolean isLineUpdate) {
+		set("is_line_update", isLineUpdate);
+		return (M)this;
+	}
+	
+	/**
+	 * 是否可行内修改
+	 */
+	public java.lang.Boolean getIsLineUpdate() {
+		return getBoolean("is_line_update");
+	}
+
+	/**
 	 * 是否删除
 	 */
 	public M setIsDelete(java.lang.Boolean isDelete) {

@@ -301,7 +301,7 @@ public class SingleController extends BaseController {
 	}
 	
 	/**
-	 * 行内修改
+	 * 修改
 	 */
 	@SuppressWarnings("unchecked")
 	public void edit() {

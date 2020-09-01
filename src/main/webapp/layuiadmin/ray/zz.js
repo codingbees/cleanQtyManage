@@ -50,7 +50,10 @@ function buildData(custom_data) {
 	  parent:{},
 	  parentDialogVisible: false,
 	  sonDialogVisible: false,
+	  p_editDialogVisible:false,
+	  s_editDialogVisible:false,
 	  fileDialogVisible:false,
+	  edit_row:{},
 	  fileList:[],
 	  inFileList:[],
       formLabelWidth: '120px',
@@ -233,12 +236,22 @@ function buildMethods(custom_methods) {
     	this.type = "parent";
     	this.parentDialogVisible = true;
 	  },
+	  parentEditInit:function(row){
+    	this.type = "parent";
+    	this.edit_row = row;
+    	this.p_editDialogVisible = true;
+	  },
 	  sonAddInit:function(row){
     	this.form = {};
     	this.fileList = [];
     	this.type = "son";
     	this.parent = row;
     	this.sonDialogVisible = true;
+	  },
+	  sonEditInit:function(row){
+    	this.type = "son";
+    	this.edit_row = row;
+    	this.s_editDialogVisible = true;
 	  },
       onSubmit:function(form,fileList){
     	  var _this = this;
@@ -269,6 +282,37 @@ function buildMethods(custom_methods) {
 				  		this.$message.error('网络请求失败');
 				  	}
 			})
+      },
+      //弹窗编辑
+      edit(form) {
+		  var _this = this;
+		  var object_id = "";
+	    	if(_this.type=="parent"){
+	    		object_id=_this.menu.data_object_id;
+		    }else{
+		    	object_id=_this.menu.son_data_object_id;
+			}
+		  axios({
+	    		method:"post",
+	    		url:"/zz/edit",
+	    		params:{object_id:object_id,row:form}
+    		}).then((res)=>{
+		    	if(res.status==200){
+			    	if(res.data.state=="ok"){
+			    		_this.$message({
+		    		          message: res.data.msg,
+		    		          type: 'success'
+		    		        });
+			    		_this.p_editDialogVisible = false;
+			    		_this.s_editDialogVisible = false;
+			    		_this.getData();
+				    }else{
+				    	this.$message.error(res.data.msg);
+					}
+			  	}else{
+			  		this.$message.error('网络请求失败');
+			  	}
+    		})
       },
       //cell编辑
 	  parentEditClosedEvent ({ row, column }, event) {
