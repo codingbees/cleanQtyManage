@@ -227,6 +227,9 @@ function buildMethods(custom_methods) {
 			  	}
     		})
       },
+      closeDialog(){
+    	  this.editDialogVisible = false;
+      },
       //弹窗修改
       edit:function(form){
     	  var _this = this;

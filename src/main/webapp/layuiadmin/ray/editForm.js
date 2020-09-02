@@ -86,12 +86,12 @@ Vue.component("edit-form",{
 		      handleClose(done) {
 		          this.$confirm('确认关闭？')
 		            .then(_ => {
-		            	this.show = false;
+		            	this.$parent.closeDialog();
 		            })
 		            .catch(_ => {});
 	          },
 	          close() {
-	        	  this.show = false;
+	        	  this.$parent.closeDialog();
 	          },
 		  }
 })

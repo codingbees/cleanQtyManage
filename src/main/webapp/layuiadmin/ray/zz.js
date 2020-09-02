@@ -314,6 +314,10 @@ function buildMethods(custom_methods) {
 			  	}
     		})
       },
+      closeDialog(){
+    	  this.p_editDialogVisible = false;
+  		  this.s_editDialogVisible = false;
+      },
       //cell编辑
 	  parentEditClosedEvent ({ row, column }, event) {
 		  var _this = this;
