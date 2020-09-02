@@ -27,6 +27,8 @@ import com.ray.common.quartz.QuartzPlugin;
 import com.ray.common.shiro.CustomAuth;
 import com.ray.common.ding.DingController;
 import com.ray.util.Commen;
+
+import net.dreamlu.event.EventPlugin;
 public class MainConfig extends JFinalConfig {
 	/**
 	 * 将全局配置提出来 方便其他地方重用
@@ -151,6 +153,11 @@ public class MainConfig extends JFinalConfig {
 		QuartzPlugin quartz = new QuartzPlugin();
 		me.add(quartz);
 		
+		//event事件驱动
+		EventPlugin event = new EventPlugin();
+		event.async();
+		event.enableClassScan();
+		me.add(event);
 	}
 	/**
 	 * 配置全局拦截器
