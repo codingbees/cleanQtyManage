@@ -50,20 +50,20 @@ public class DataNote {
 
 		   //忽略表
 		   ArrayList<String> ignoreTableName = new ArrayList<>();
-//		   ignoreTableName.add("dicts");
-//		   ignoreTableName.add("file");
-//		   ignoreTableName.add("menu");
-//		   ignoreTableName.add("permissions");
-//		   ignoreTableName.add("role_permission");
-//		   ignoreTableName.add("roles");
-//		   ignoreTableName.add("serial_number");
-//		   ignoreTableName.add("user");
-//		   ignoreTableName.add("user_role");
-//		   ignoreTableName.add("yw_test");
-//		   ignoreTableName.add("yw_test_son");
+		   ignoreTableName.add("dicts");
+		   ignoreTableName.add("file");
+		   ignoreTableName.add("menu");
+		   ignoreTableName.add("permissions");
+		   ignoreTableName.add("role_permission");
+		   ignoreTableName.add("roles");
+		   ignoreTableName.add("serial_number");
+		   ignoreTableName.add("user");
+		   ignoreTableName.add("user_role");
+		   ignoreTableName.add("yw_test");
+		   ignoreTableName.add("yw_test_son");
 		   //忽略表前缀
 		   ArrayList<String> ignorePrefix = new ArrayList<>();
-//		   ignorePrefix.add("data_");
+		   ignorePrefix.add("data_");
 		   //忽略表后缀    
 		   ArrayList<String> ignoreSuffix = new ArrayList<>();
 		   //ignoreSuffix.add("_test");
