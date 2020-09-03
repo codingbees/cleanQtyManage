@@ -147,7 +147,7 @@ CREATE TABLE `dicts` (
   `field` varchar(50) NOT NULL COMMENT '字段名',
   `ext` varchar(255) DEFAULT '' COMMENT '扩展Json',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=617 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=617 DEFAULT CHARSET=utf8 COMMENT='字典表';
 
 /*Data for the table `dicts` */
 
@@ -163,7 +163,7 @@ CREATE TABLE `file` (
   `url` text NOT NULL COMMENT '文件路径',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=utf8 COMMENT='文件表';
 
 /*Data for the table `file` */
 
@@ -189,7 +189,7 @@ CREATE TABLE `menu` (
   `href` varchar(255) DEFAULT NULL COMMENT '菜单链接',
   `is_hide` int(1) NOT NULL COMMENT '是否隐藏：1隐藏，0显示',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=158 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=158 DEFAULT CHARSET=utf8 COMMENT='菜单';
 
 /*Data for the table `menu` */
 
@@ -206,7 +206,7 @@ CREATE TABLE `permissions` (
   `type` int(1) NOT NULL COMMENT '权限类型：1菜单，2按钮，3数据',
   `gl_id` int(11) DEFAULT NULL COMMENT '关联菜单ID',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2325 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2325 DEFAULT CHARSET=utf8 COMMENT='权限';
 
 /*Data for the table `permissions` */
 
@@ -221,7 +221,7 @@ CREATE TABLE `role_permission` (
   `role_id` int(11) NOT NULL COMMENT '角色ID',
   `permission_id` int(11) NOT NULL COMMENT '权限ID',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2338 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2338 DEFAULT CHARSET=utf8 COMMENT='角色_权限';
 
 /*Data for the table `role_permission` */
 
@@ -237,7 +237,7 @@ CREATE TABLE `roles` (
   `role_nick_name` varchar(255) DEFAULT NULL COMMENT '角色名称',
   `role_desc` varchar(255) DEFAULT NULL COMMENT '具体描述',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 COMMENT='角色';
 
 /*Data for the table `roles` */
 
@@ -254,7 +254,7 @@ CREATE TABLE `serial_number` (
   `ingredient_plan_no` int(11) NOT NULL DEFAULT '1' COMMENT '配料单号',
   `cust_order_no` int(11) NOT NULL DEFAULT '1' COMMENT '客户订单号',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='自增单号';
 
 /*Data for the table `serial_number` */
 
@@ -273,7 +273,7 @@ CREATE TABLE `user` (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='用户';
 
 /*Data for the table `user` */
 
@@ -288,7 +288,7 @@ CREATE TABLE `user_role` (
   `user_id` int(11) NOT NULL COMMENT '用户ID',
   `role_id` int(11) NOT NULL COMMENT '角色ID',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4657 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4657 DEFAULT CHARSET=utf8 COMMENT='用户_角色';
 
 /*Data for the table `user_role` */
 
@@ -313,11 +313,11 @@ CREATE TABLE `yw_test` (
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8 COMMENT='业务演示_父表';
 
 /*Data for the table `yw_test` */
 
-insert  into `yw_test`(`id`,`workshop`,`no`,`name`,`is_show`,`file_url`,`statu`,`test_statu`,`create_user_id`,`create_user_name`,`create_date`,`create_time`,`update_time`) values (1,4,'1','第一条产线',0,'91,98',0,1,'1','超级管理员','2020-07-01','2020-06-24 16:32:15','2020-09-01 09:59:12'),(2,7,'NO2斯蒂芬斯蒂芬斯蒂芬啥地方sdfsdfsdfsdfsdfsdfsdfsdf电话','第二条产线哟',0,'',0,1,'1','超级管理员','2020-07-22','2020-06-28 10:38:15','2020-09-01 10:11:35'),(40,4,'122312121','收拾收拾',1,'104,105',1,1,'1','超级管理员','2020-07-25','2020-07-15 14:22:29','2020-09-01 10:38:58'),(41,1,'12','1322122222222',1,'106',1,1,'1','超级管理员','2020-07-15','2020-07-15 14:48:44','2020-09-01 10:31:13'),(42,2,'122','斯蒂芬斯蒂芬斯蒂芬12121时代发生的发的收到发生大火sdf收到收到收到发生的 ',1,NULL,1,1,'1','超级管理员','2020-07-24','2020-07-15 15:10:59','2020-09-01 10:16:36'),(43,3,'sdfsdf芬斯蒂芬斯蒂芬sdfsdf','1sdfsdf',1,NULL,0,2,'1','超级管理员','2020-07-25','2020-07-15 15:16:09','2020-08-04 16:11:09'),(56,3,'2123123','222222',1,NULL,0,1,'1','超级管理员','2020-07-08','2020-07-24 15:29:24','2020-08-04 11:45:51');
+insert  into `yw_test`(`id`,`workshop`,`no`,`name`,`is_show`,`file_url`,`statu`,`test_statu`,`create_user_id`,`create_user_name`,`create_date`,`create_time`,`update_time`) values (1,4,'1','第一条产线',0,'91,98',0,1,'1','超级管理员','2020-07-01','2020-06-24 16:32:15','2020-09-02 11:41:01'),(2,7,'NO2斯蒂芬斯蒂芬斯蒂芬啥地方sdfsdfsdfsdfsdfsdfsdfsdf电话','第二条产线哟',0,'',0,1,'1','超级管理员','2020-07-22','2020-06-28 10:38:15','2020-09-02 11:41:09'),(40,4,'122312121','收拾收拾',1,'104,105',1,1,'1','超级管理员','2020-07-25','2020-07-15 14:22:29','2020-09-02 11:42:35'),(41,1,'12','1322122222222',1,'106',1,1,'1','超级管理员','2020-07-15','2020-07-15 14:48:44','2020-09-02 11:40:23'),(42,2,'122','斯蒂芬斯蒂芬斯蒂芬12121时代发生的发的收到发生大火sdf收到收到收到发生的 ',1,NULL,1,1,'1','超级管理员','2020-07-24','2020-07-15 15:10:59','2020-09-01 10:16:36'),(43,3,'sdfsdf芬斯蒂芬斯蒂芬sdfsdf','1sdfsdf',1,NULL,0,2,'1','超级管理员','2020-07-25','2020-07-15 15:16:09','2020-08-04 16:11:09'),(56,3,'2123123','222222',1,NULL,0,1,'1','超级管理员','2020-07-08','2020-07-24 15:29:24','2020-08-04 11:45:51');
 
 /*Table structure for table `yw_test_son` */
 
@@ -329,7 +329,7 @@ CREATE TABLE `yw_test_son` (
   `no` varchar(255) DEFAULT NULL COMMENT '工序号',
   `name` varchar(255) DEFAULT NULL COMMENT '工序名称',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='业务演示_子表';
 
 /*Data for the table `yw_test_son` */
 

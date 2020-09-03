@@ -1,6 +1,6 @@
 /*JS*/
 /*VUE*/
-document.write('<script src="/layuiadmin/vue/vue.min.js"></script>');
+document.write('<script src="/layuiadmin/vue/vue.js"></script>');
 /*layui*/
 document.write('<script src="/layuiadmin/layui/layui.js"></script>');
 /*axio*/
