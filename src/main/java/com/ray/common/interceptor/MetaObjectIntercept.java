@@ -48,6 +48,10 @@ public class MetaObjectIntercept {
     public String queryBefore(AopContext ac) throws Exception {
     	return ac.sql;
     }
+    
+    public String fieldQueryBefore(AopContext ac) throws Exception {
+    	return ac.sql;
+    }
 
     /**
      * 查询后置任务

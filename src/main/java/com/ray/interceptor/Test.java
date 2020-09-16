@@ -15,6 +15,15 @@ public class Test extends MetaObjectIntercept{
 	}
 	
 	@Override
+	public String fieldQueryBefore(AopContext ac) throws Exception {
+		if("project_id".equals(ac.field)) {
+			ac.sql = ac.sql+" and (customer_user = "+ac.user.get("id")+" or "
+					+ " FIND_IN_SET("+ac.user.get("id")+"user_ids))";
+		}
+		return ac.sql;
+	}
+	
+	@Override
 	public String addBefore(AopContext ac) throws Exception {
 		ac.record.set("create_user_id", ac.user.get("id"));
 		ac.record.set("create_user_name", ac.user.get("nickname"));

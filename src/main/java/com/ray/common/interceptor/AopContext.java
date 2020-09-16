@@ -67,6 +67,8 @@ public class AopContext {
      * 自定义SQL参数
      */
     public List<Object> params = new ArrayList<Object>();
+    
+    public String field;
     /**
      * 自定义SQL覆盖默认排序
      * 格式: order by xxx desc
@@ -80,6 +82,12 @@ public class AopContext {
     public AopContext(Controller ctrl){
         this.ctrl = ctrl;
         this.user = (Record)ctrl.getSessionAttr("user");
+    }
+    
+    public AopContext(Controller ctrl,String field){
+        this.ctrl = ctrl;
+        this.user = (Record)ctrl.getSessionAttr("user");
+        this.field = field;
     }
 
     public AopContext(Controller ctrl, List<Record> records){
