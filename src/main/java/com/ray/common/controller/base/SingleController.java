@@ -95,9 +95,6 @@ public class SingleController extends BaseController {
 				String sql = "select " + list.get(i).getTypeConfig().split("\\|")[1] + " as label,"
 						+ list.get(i).getTypeConfig().split("\\|")[2] + " as value "
 						+ list.get(i).getTypeConfig().split("\\|")[0];
-				if (list.get(i).getTypeConfig().split("\\|")[0].indexOf("where") == -1) {
-					sql += "where 1=1";
-				}
 				/**
 				 * query before
 				 */
