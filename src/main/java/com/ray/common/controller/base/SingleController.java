@@ -25,6 +25,7 @@ import com.ray.common.model.DataButton;
 import com.ray.common.model.DataField;
 import com.ray.common.model.DataObject;
 import com.ray.common.model.Menu;
+import com.ray.common.model.User;
 import com.ray.util.Commen;
 
 /**
@@ -116,6 +117,11 @@ public class SingleController extends BaseController {
 //					sql += " and " + query[j].split(":")[0] + user.get(query[j].split(":")[1]);
 //				}
 				temp = Db.find(sql);
+			}
+			// 获取所有用户信息
+			if("user".equals(list.get(i).getType())) {
+				List<User> users = User.dao.findAll();
+				resp.set("users", users);
 			}
 			map.add(temp);
 			// 获取字段前端校验
@@ -360,6 +366,21 @@ public class SingleController extends BaseController {
 							+ "' and table_name = '" + object.getTableName() + "' order by ORDINAL_POSITION");
 			for (int i = 0; i < list.size(); i++) {
 				model.set(list.get(i).getStr("COLUMN_NAME"), temp.get(list.get(i).getStr("COLUMN_NAME")));
+			}
+			
+			//处理多选下拉框传值问题
+			if("dialog".equals(get("type"))) {
+				List<DataField> fields = DataField.dao.find("select * from data_field where data_object_id = "+object.getId());
+				for (int i = 0; i < fields.size(); i++) {
+					if("user".equals(fields.get(i).getType())) {
+						JSONArray array = (JSONArray)temp.get(fields.get(i).getEn());
+						String temp1 = "";
+						for (int j = 0; j < array.size(); j++) {
+							temp1 += array.get(j)+",";
+						}
+						model.set(fields.get(i).getEn(), temp1.substring(0, temp1.length()-1));
+					}
+				}
 			}
 			/**
 			 * 上下文

@@ -73,6 +73,7 @@ public class ZZController extends BaseController {
 	 */
 	public void getColumns() {
 		Record resp = new Record();
+		DataObject model = DataObject.dao.findById(get("object_id"));
 		List<DataField> list = DataField.dao
 				.find("select * from data_field where data_object_id = " + get("object_id") + " order by order_num");
 		resp.set("list", list);
@@ -89,16 +90,31 @@ public class ZZController extends BaseController {
 				String sql = "select " + list.get(i).getTypeConfig().split("\\|")[1] + " as label,"
 						+ list.get(i).getTypeConfig().split("\\|")[2] + " as value "
 						+ list.get(i).getTypeConfig().split("\\|")[0];
-				if (list.get(i).getTypeConfig().split("\\|").length >= 4) {
-					if ("where".indexOf(list.get(i).getTypeConfig().split("\\|")[0]) == -1) {
-						sql += "where 1=1";
+				/**
+				 * query before
+				 */
+				try {
+					intercept = TemplateUtil.initMetaObjectIntercept(model.getInterceptor());
+					if (intercept != null) {
+						AopContext ac = new AopContext(ctrl,list.get(i).getEn());
+						ac.sql = sql;
+						sql = intercept.fieldQueryBefore(ac);
 					}
-					String[] query = list.get(i).getTypeConfig().split("\\|")[3].split(",");
-					Record user = (Record) getSessionAttr("user");
-					for (int j = 0; j < query.length; j++) {
-						sql += " and " + query[j].split(":")[0] + user.get(query[j].split(":")[1]);
-					}
+				} catch (Exception e) {
+					renderJson(Ret.fail("msg", e.getMessage()));
+					e.printStackTrace();
+					return;
 				}
+//				if (list.get(i).getTypeConfig().split("\\|").length >= 4) {
+//					if ("where".indexOf(list.get(i).getTypeConfig().split("\\|")[0]) == -1) {
+//						sql += "where 1=1";
+//					}
+//					String[] query = list.get(i).getTypeConfig().split("\\|")[3].split(",");
+//					Record user = (Record) getSessionAttr("user");
+//					for (int j = 0; j < query.length; j++) {
+//						sql += " and " + query[j].split(":")[0] + user.get(query[j].split(":")[1]);
+//					}
+//				}
 				temp = Db.find(sql);
 			}
 			map.add(temp);
@@ -261,6 +277,18 @@ public class ZZController extends BaseController {
 			Map map = FastJson.getJson().parse(get("form"), Map.class);
 			Record model = new Record().setColumns(map);
 
+			//处理多选下拉框传值问题
+			List<DataField> fields = DataField.dao.find("select * from data_field where data_object_id = "+object.getId());
+			for (int i = 0; i < fields.size(); i++) {
+				if("user".equals(fields.get(i).getType())) {
+					JSONArray array = (JSONArray)map.get(fields.get(i).getEn());
+					String temp = "";
+					for (int j = 0; j < array.size(); j++) {
+						temp += array.get(j)+",";
+					}
+					model.set(fields.get(i).getEn(), temp.substring(0, temp.length()-1));
+				}
+			}
 			/**
 			 * 上下文
 			 */
@@ -383,6 +411,21 @@ public class ZZController extends BaseController {
 							+ "' and table_name = '" + object.getTableName() + "' order by ORDINAL_POSITION");
 			for (int i = 0; i < list.size(); i++) {
 				model.set(list.get(i).getStr("COLUMN_NAME"), temp.get(list.get(i).getStr("COLUMN_NAME")));
+			}
+			
+			//处理多选下拉框传值问题
+			if("dialog".equals(get("type"))) {
+				List<DataField> fields = DataField.dao.find("select * from data_field where data_object_id = "+object.getId());
+				for (int i = 0; i < fields.size(); i++) {
+					if("user".equals(fields.get(i).getType())) {
+						JSONArray array = (JSONArray)temp.get(fields.get(i).getEn());
+						String temp1 = "";
+						for (int j = 0; j < array.size(); j++) {
+							temp1 += array.get(j)+",";
+						}
+						model.set(fields.get(i).getEn(), temp1.substring(0, temp1.length()-1));
+					}
+				}
 			}
 
 			/**

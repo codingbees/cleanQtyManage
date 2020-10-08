@@ -39,6 +39,22 @@ Vue.component("edit-form",{
 								        style="width: 100%;"
 								        placeholder="选择日期">
 								  </el-date-picker>
+								  <el-select
+								    v-if="item.type=='user'"
+								    v-model="form[item.en]"
+								    multiple
+								    filterable
+								    reserve-keyword
+								    placeholder="请输入中文姓名或拼音简写"
+								    :filter-method="PingyinMatch"
+								    :multiple-limit="parseInt(item.type_config.split('|')[0])">
+								    <el-option
+								      v-for="item in options"
+								      :key="item.value"
+								      :label="item.label"
+								      :value="item.value">
+								    </el-option>
+								  </el-select>
 							    </el-form-item>
 							  </el-col>
 							</el-row>
@@ -58,7 +74,11 @@ Vue.component("edit-form",{
 		    	form:{},
 		    	formLabelWidth:'120px',
 		    	dialogTitle:'编辑',
-		    	show:false
+		    	show:false,
+		    	options: [],
+		        list: [],
+		        limit:0,
+		        loading: false,
 		    }
 		  },
 		  watch: {
@@ -68,10 +88,45 @@ Vue.component("edit-form",{
 		      this.selectList = selectList
 		      this.rules = rules
 		      this.show = show
+		      this.getUserList()
 		      this.form = row
-		    }
+		    },
 		  },
 		  methods: {
+			  PingyinMatch(val){
+		    	  if(val){
+		    		  this.loading = true;
+		    		  setTimeout(() => {
+		    			this.loading = false;
+	    			    var result = [];
+						this.list.forEach(i => {
+							var m = PinyinMatch.match(i.label, val)
+							if(m){
+								result.push(i);
+							}
+						})
+						this.options = result;
+			          }, 200);
+			      }else{
+			    	this.options = this.list;
+				  }
+			  },
+		      getUserList() {
+		    	  var _this = this;
+		    	  if(_this.list.length==0){
+		    		  axios({
+				    		method:"post",
+				    		url:"/common/getUser"
+			    		}).then((res)=>{
+					    	if(res.status==200){
+					    		_this.list = res.data;
+					    		_this.options = _this.list;
+						  	}else{
+						  		this.$message.error('网络请求失败');
+						  	}
+			    		})
+			      }
+		        },
 			  onSubmit(formName){
 				  var _this = this;
 		    	  this.$refs[formName].validate((valid) => {

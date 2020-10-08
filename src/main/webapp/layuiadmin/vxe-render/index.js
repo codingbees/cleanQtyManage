@@ -24,6 +24,24 @@ VXETable.renderer.add('cell-switch', {
   }
 })
 
+VXETable.renderer.add('cell-user', {
+  // 选人字段展示
+  renderDefault (h, renderOpts, params) {
+    let { row, column } = params
+    let { options } = renderOpts
+    var temp = row[column.property].split(",");
+    var names = "";
+    for(var i=0;i<temp.length;i++){
+    	options.forEach(function(item){
+    		if(item.id == temp[i]){
+    			names += item.nickname+",";
+    		}
+    	})
+    }
+    return names.substring(0,names.length-1);
+  }
+});
+
 
 //前端字段格式化
 VXETable.formats.add('format', ({ cellValue,row }, formatter) => {

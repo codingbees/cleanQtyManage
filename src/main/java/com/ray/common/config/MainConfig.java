@@ -154,10 +154,10 @@ public class MainConfig extends JFinalConfig {
 		me.add(quartz);
 		
 		//event事件驱动
-		EventPlugin event = new EventPlugin();
-		event.async();
-		event.enableClassScan();
-		me.add(event);
+//		EventPlugin event = new EventPlugin();
+//		event.async();
+//		event.enableClassScan();
+//		me.add(event);
 	}
 	/**
 	 * 配置全局拦截器

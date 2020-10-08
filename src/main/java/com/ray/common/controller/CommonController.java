@@ -32,6 +32,7 @@ import com.ray.common.interceptor.TemplateUtil;
 import com.ray.common.model.DataField;
 import com.ray.common.model.DataObject;
 import com.ray.common.model.Dicts;
+import com.ray.common.model.User;
 
 /**
  * 工具类
@@ -151,7 +152,7 @@ public class CommonController extends BaseController {
 		String[] fileArray = getParaValues("fileList[]");
 		int now = fileArray.length;
 		//最多个数限制
-		int all = Integer.valueOf(file_field.getFormatter().split("\\|")[1]);
+		int all = Integer.valueOf(file_field.getTypeConfig().split("\\|")[1]);
 		//判断文件个数限制
 		if(has+now<=all) {
 			String fileIds = model.get(get("column"));
@@ -166,7 +167,7 @@ public class CommonController extends BaseController {
 				if(!"".equals(jb.getString("response")) && jb.getString("response")!=null) {
 					JSONObject response = JSONObject.parseObject(jb.getString("response"));
 					File file = new File(p.get("domin_path")+"/temp/"+response.getString("fileName"));
-					File newfile = new File(p.get("domin_path")+"/"+file_field.getFormatter().split("\\|")[0]+"/"+UUID.randomUUID()+"."+response.getString("fileName").split("\\.")[1]);
+					File newfile = new File(p.get("domin_path")+"/"+file_field.getTypeConfig().split("\\|")[0]+"/"+UUID.randomUUID()+"."+response.getString("fileName").split("\\.")[1]);
 					File fileParent = newfile.getParentFile();
 					//判断文件夹是否存在
 					if (!fileParent.exists()) {
@@ -177,7 +178,7 @@ public class CommonController extends BaseController {
 						if(file.renameTo(newfile)){
 							Record fileRecord = new Record();
 							fileRecord.set("name", response.getString("fileName"));
-							fileRecord.set("url", "/"+file_field.getFormatter().split("\\|")[0]+"/"+newfile.getName());
+							fileRecord.set("url", "/"+file_field.getTypeConfig().split("\\|")[0]+"/"+newfile.getName());
 							Db.save("file", fileRecord);
 							respFileList.add(fileRecord);
 							fileIds +=fileRecord.getStr("id")+",";
@@ -310,5 +311,16 @@ public class CommonController extends BaseController {
 	    Record resp = new Record();
 	    resp.set("url", "/export/"+filename);
 	    renderJson(resp);
+	}
+	
+	/**
+	 * 获取所有用户列表
+	 * @author Ray
+	 * @contact 461812883@qq.com
+	 * @time 2020年9月15日 上午9:30:10
+	 */
+	public void getUser() {
+		List<User> list = User.dao.find("select id as value,nickname as label from user");
+		renderJson(list);
 	}
 }

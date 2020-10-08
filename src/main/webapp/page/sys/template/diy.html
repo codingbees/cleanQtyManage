@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="/layuiadmin/main.js"></script>
+</head>
+<body>
+	<div id="app" style="padding:20px">
+		<el-button type="primary" @click="selectUser">选人</el-button>
+	</div>
+<script>
+var $;
+layui.config({
+    base: '/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index'],function(){
+	  $ = layui.$;
+  });
+	
+	var vm = new Vue({
+		  el: '#app',
+		  data: {
+			
+		  },
+		  mounted() {
+			  
+		  },
+		  methods:{
+			  selectUser(){
+				  var _this =  this;
+				  layer.open({
+					  type: 2,
+					  title: '选人',
+					  shadeClose: true,
+					  shade: 0.8,
+					  area: ['500px', '500px'],
+					  content: '/page/sys/template/selectUser.html',
+					  btn: ['确定', '取消'],
+					  success: function(layero, index){
+				         var iframe = window['layui-layer-iframe'+index];
+				         //选择人员数量限制 0 为不限制
+				         iframe.limit(0);
+				         //指定可选人员 传入[] 表示所有人员
+				         iframe.assign([]);
+			          },
+		              yes: function(index, layero){
+						var userList=$(layero).find("iframe")[0].contentWindow.userList();
+						if(userList.length>0){
+							console.log(userList);
+							layer.close(index);
+						}else{
+							layer.msg("请选择人员", {icon: 5});
+						}
+		              }
+					});
+			  }
+		  }
+	})
+
+</script>
+</body>
+</html>

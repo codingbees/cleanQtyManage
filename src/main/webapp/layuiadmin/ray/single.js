@@ -145,6 +145,7 @@ function buildMethods(custom_methods) {
 		    		_this.headButtons = res.data.headButtons;
 		    		_this.lineButtons = res.data.lineButtons;
 		    		_this.data_object = res.data.data_object;
+		    		_this.users = res.data.users;
 			  	}else{
 			  		this.$message.error('网络请求失败');
 			  	}
@@ -199,9 +200,20 @@ function buildMethods(custom_methods) {
 	  addInit:function(){
     	this.addDialogVisible = true;
 	  },
-	  editInit:function(row){
-		this.edit_row = row;
-    	this.editDialogVisible = true;
+	  editInit:function(row1){
+		  let row = JSON.parse(JSON.stringify(row1));
+		  var temp;
+		  for(var i=0;i<this.columns.length;i++){
+			  if(this.columns[i].type=="user"){
+				  temp = row[this.columns[i].en].split(",");
+				  for(var j=0;j<temp.length;j++){
+					  temp[j] = parseInt(temp[j]);
+				  }
+				  row[this.columns[i].en] = temp;
+			  }
+		  }
+		  this.edit_row = row;
+    	  this.editDialogVisible = true;
 	  },
       onSubmit:function(form,fileList){
     	  var _this = this;
@@ -236,7 +248,7 @@ function buildMethods(custom_methods) {
     	  axios({
 	    		method:"post",
 	    		url:"/single/edit",
-	    		params:{row:form,object_id:_this.menu.data_object_id}
+	    		params:{row:form,object_id:_this.menu.data_object_id,type:"dialog"}
     		}).then((res)=>{
 		    	if(res.status==200){
 		    		if(res.data.state=="ok"){
@@ -260,7 +272,7 @@ function buildMethods(custom_methods) {
 		  axios({
 	    		method:"post",
 	    		url:"/single/edit",
-	    		params:{row:row,object_id:_this.menu.data_object_id}
+	    		params:{row:row,object_id:_this.menu.data_object_id,type:'cell'}
     		}).then((res)=>{
 		    	if(res.status==200){
 			    	if(res.data.state=="ok"){

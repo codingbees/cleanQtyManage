@@ -49,7 +49,8 @@
 						      	:sortable="item.is_order"
 						      	show-overflow
 						      	show-header-overflow
-						      	v-bind="item.type!='file'?(item.is_line_update&&data_object.is_line_update?
+						      	v-bind="item.type!='file'?(item.type=='user'?{'cell-render':{name:'cell-user',options: users}}
+						      	:(item.is_line_update&&data_object.is_line_update?
 						      	(item.type=='input'?{'edit-render':{name: 'EditDownTextarea'}}:
 						      	 item.type=='select'||item.type=='radio'?{'edit-render':{name: '$select', options: selectList[index],optionProps: {value: 'value', label: 'label'}}}:
 						      	 item.type=='switch'?{'cell-render':{name: '$switch',events:{change:editClosedEvent}}}:
@@ -58,7 +59,7 @@
 						      	 
 						      	 item.formatter?{'formatter':['format',item.formatter],'type':'html'}:
 								 item.type=='select'||item.type=='radio'?{'cell-render':{name:'cell-select',options: selectList[index]}}:
-								 item.type=='switch'?{'cell-render':{name:'cell-switch'}}:'')
+								 item.type=='switch'?{'cell-render':{name:'cell-switch'}}:''))
 								 
 								 :item.is_update&&data_object.is_update?{'cell-render':{name: '$button',props:{status:'primary',size:'small',content:'查看',itemInfo:item},events:{click:fileEdit}}}:
 								 {'cell-render':{name: '$button',props:{status:'primary',size:'small',content:'查看'},events:{click:fileScan}}}">

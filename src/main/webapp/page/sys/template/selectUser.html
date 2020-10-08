@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="/layuiadmin/main.js"></script>
+<style>
+	.el-input__inner{
+		border:none;
+	}
+</style>
+</head>
+<body>
+	<div id="app" style="padding:20px">
+		<el-row :gutter="20">
+		  <el-col :span="24">
+		  	  <el-select
+			    v-model="value"
+			    multiple
+			    filterable
+			    reserve-keyword
+			    placeholder="请输入中文姓名或拼音简写"
+			    :filter-method="PingyinMatch"
+			    :multiple-limit="limit"
+			    :loading="loading"
+			    style="width:100%;"
+			    popper-class="mySelect">
+			    <el-option
+			      v-for="item in options"
+			      :key="item.value"
+			      :label="item.label"
+			      :value='"{\"userid\":\""+item.value+"\",\"nickname\":\""+item.label+"\"}"'>
+			    </el-option>
+			  </el-select>
+		  </el-col>
+		</el-row>
+	</div>
+<script>
+	var vm = new Vue({
+		  el: '#app',
+		  data: {
+			options: [],
+	        value: [],
+	        list: [],
+	        limit:0,
+	        loading: false,
+		  },
+		  methods:{
+		      PingyinMatch(val){
+		    	  if(val){
+		    		  this.loading = true;
+		    		  setTimeout(() => {
+		    			this.loading = false;
+	    			    var result = [];
+						this.list.forEach(i => {
+							var m = PinyinMatch.match(i.label, val)
+							if(m){
+								result.push(i);
+							}
+						})
+						this.options = result;
+			          }, 200);
+			      }else{
+			    	this.options = this.list;
+				  }
+			  },
+		      loadAll() {
+		    	  var _this = this;
+		    	  if(_this.list.length==0){
+		    		  axios({
+				    		method:"post",
+				    		url:"/common/getUser"
+			    		}).then((res)=>{
+					    	if(res.status==200){
+					    		_this.list = res.data;
+					    		_this.options = _this.list;
+						  	}else{
+						  		this.$message.error('网络请求失败');
+						  	}
+			    		})
+			      }
+		        },
+		  }
+	})
+
+	var userList = function(){
+		var list = [];
+		for(var i=0;i<vm.value.length;i++){
+			list.push(JSON.parse(vm.value[i]));	
+		}
+		return list;
+	}
+
+	function limit(data) {
+	    vm.limit = data;
+	}
+
+	function assign(data) {
+		if(data.length>0){
+			vm.list = data;
+			vm.options = vm.list;
+		}else{
+			vm.loadAll();
+		}
+	}
+</script>
+</body>
+</html>

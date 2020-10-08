@@ -236,8 +236,19 @@ function buildMethods(custom_methods) {
     	this.type = "parent";
     	this.parentDialogVisible = true;
 	  },
-	  parentEditInit:function(row){
+	  parentEditInit:function(row1){
     	this.type = "parent";
+    	let row = JSON.parse(JSON.stringify(row1));
+		  var temp;
+		  for(var i=0;i<this.parent_columns.length;i++){
+			  if(this.parent_columns[i].type=="user"){
+				  temp = row[this.parent_columns[i].en].split(",");
+				  for(var j=0;j<temp.length;j++){
+					  temp[j] = parseInt(temp[j]);
+				  }
+				  row[this.parent_columns[i].en] = temp;
+			  }
+		  }
     	this.edit_row = row;
     	this.p_editDialogVisible = true;
 	  },
@@ -248,8 +259,19 @@ function buildMethods(custom_methods) {
     	this.parent = row;
     	this.sonDialogVisible = true;
 	  },
-	  sonEditInit:function(row){
+	  sonEditInit:function(row1){
     	this.type = "son";
+    	let row = JSON.parse(JSON.stringify(row1));
+		  var temp;
+		  for(var i=0;i<this.son_columns.length;i++){
+			  if(this.son_columns[i].type=="user"){
+				  temp = row[this.son_columns[i].en].split(",");
+				  for(var j=0;j<temp.length;j++){
+					  temp[j] = parseInt(temp[j]);
+				  }
+				  row[this.son_columns[i].en] = temp;
+			  }
+		  }
     	this.edit_row = row;
     	this.s_editDialogVisible = true;
 	  },
@@ -295,7 +317,7 @@ function buildMethods(custom_methods) {
 		  axios({
 	    		method:"post",
 	    		url:"/zz/edit",
-	    		params:{object_id:object_id,row:form}
+	    		params:{object_id:object_id,row:form,type:"dialog"}
     		}).then((res)=>{
 		    	if(res.status==200){
 			    	if(res.data.state=="ok"){
@@ -305,7 +327,7 @@ function buildMethods(custom_methods) {
 		    		        });
 			    		_this.p_editDialogVisible = false;
 			    		_this.s_editDialogVisible = false;
-			    		_this.getData();
+			    		_this.getParentData();
 				    }else{
 				    	this.$message.error(res.data.msg);
 					}
@@ -324,7 +346,7 @@ function buildMethods(custom_methods) {
 		  axios({
 	    		method:"post",
 	    		url:"/zz/edit",
-	    		params:{object_id:_this.menu.data_object_id,row:row,column:column.property}
+	    		params:{object_id:_this.menu.data_object_id,row:row,column:column.property,type:"cell"}
     		}).then((res)=>{
 		    	if(res.status==200){
 			    	if(res.data.state=="ok"){
@@ -345,7 +367,7 @@ function buildMethods(custom_methods) {
 		  axios({
 	    		method:"post",
 	    		url:"/zz/edit",
-	    		params:{object_id:_this.menu.son_data_object_id,row:row,column:column.property}
+	    		params:{object_id:_this.menu.son_data_object_id,row:row,column:column.property,type:"cell"}
     		}).then((res)=>{
 		    	if(res.status==200){
 			    	if(res.data.state=="ok"){

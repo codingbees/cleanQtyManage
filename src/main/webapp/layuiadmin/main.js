@@ -18,6 +18,8 @@ document.write('<script src="/layuiadmin/vxe-render/index.js" type="module"></sc
 document.write('<script src="/layuiadmin/view-design/dist/iview.js"></script>');
 /*ding*/
 document.write('<script src="http://g.alicdn.com/dingding/dingtalk-jsapi/2.0.57/dingtalk.open.js"></script>');
+/*py*/
+document.write('<script src="/layuiadmin/py/main.js"></script>');
 
 /*CSS*/
 
