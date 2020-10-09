@@ -70,9 +70,12 @@
               <i class="layui-icon layui-icon-refresh-3"></i>
             </a>
           </li>
-          <li class="layui-nav-item layui-hide-xs" lay-unselect>
-            <input type="text" placeholder="搜索..." autocomplete="off" class="layui-input layui-input-search" layadmin-event="serach" lay-action="template/search.html?keywords="> 
+          <li class="layui-nav-item" v-for="(item,p_index) in menus" lay-unselect>
+          	<a href="javascript:;" :style="{'border-top':p_index==index?'2px solid black':'none','margin-top':'1px'}" @click="top_click(item.children,p_index)">{{item.title}}</a>
           </li>
+          <!-- <li class="layui-nav-item layui-hide-xs" lay-unselect>
+            <input type="text" placeholder="搜索..." autocomplete="off" class="layui-input layui-input-search" layadmin-event="serach" lay-action="template/search.html?keywords="> 
+          </li> -->
         </ul>
         <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
           
@@ -126,51 +129,12 @@
           <div class="layui-logo">
             <span>#(system.company)</span>
           </div>
-          
-          <!-- <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
-          	
-          	#for(x : menu)
-          		#if(x.children !=null)
-          		<li data-name="#(x.title_en)" class="layui-nav-item">
-	              <a href="javascript:;" lay-tips="#(x.title)" lay-direction="2">
-	                <i class="pfep #(x.icon)"></i>
-	                <cite>#(x.title)</cite>
-	              </a>
-	              <dl class="layui-nav-child">
-	              	#for(y :x.children)
-	              		#if(y.children !=null)
-	              		<dd data-name="#(y.title_en)">
-		                  <a href="javascript:;">&nbsp;&nbsp;#(y.title)</a>
-		                  <dl class="layui-nav-child">
-		                  	#for(z : y.children)
-		                    <dd data-name="#(z.title_en)"><a lay-href="#(z.href)">&nbsp;&nbsp;#(z.title)</a></dd>
-		                    #end
-		                  </dl>
-		                </dd>
-	              		#else
-		                <dd data-name="#(y.title_en)">
-		                    <a lay-href="#(y.type==1?'/single/single?object_id='+y.data_object_id+'&url='+y.href:y.type==2?'/zz/zz?id='+y.id+'&url='+y.href:y.href)">&nbsp;&nbsp;&nbsp;&nbsp;#(y.title)</a>
-		                </dd>
-		                #end
-		            #end
-	              </dl>
-	            </li>
-	            #else
-	            <li data-name="#(x.title_en)" class="layui-nav-item">
-	              <a href="javascript:;" lay-href="#(x.type==1?'/single/single?object_id='+x.data_object_id+'&url='+x.href:x.type==2?'/zz/zz?id='+x.id+'&url='+x.href:x.href)" lay-tips="#(x.title)" lay-direction="2">
-	                <i class="pfep #(x.icon)"></i>
-	                <cite>#(x.title)</cite>
-	              </a>
-	            </li>
-	            #end
-          	#end
-          </ul> -->
           <el-menu class="el-menu-vertical-demo" style="margin-top:50px;padding-right:10px;border:none"
           	:collapse="isCollapse"
           	background-color="#20222A"
           	text-color="#CECED0"
           	@select="clickMenu">
-          	  <template v-for="(item,p_index) in menus">
+          	  <template v-for="(item,p_index) in left_menu">
           	  	<el-submenu v-if="item.children.length>0" :index="p_index+''">
           	  	 <template slot="title">
 			      <i :class="'pfep '+item.icon"></i>
@@ -233,7 +197,9 @@
 	  el: '#LAY_app',
 	  data: {
 	    isCollapse: false,
-	    menus:[]
+	    menus:[],
+	    left_menu:[],
+	    index:0
 	  },
 	  mounted () {
 		  window.onresize = () =>{
@@ -253,9 +219,13 @@
 		  collapse_false(){
 				this.isCollapse = false;
 		  },
+		  top_click(left_menu,index){
+			this.left_menu = left_menu;
+			this.index = index;
+		  },
 		  clickMenu(index){
 			  var indexArray = index.split("-");
-			  var thisMenu = this.menus[indexArray[0]];
+			  var thisMenu = this.left_menu[indexArray[0]];
 			  for(var i=1;i<indexArray.length;i++){
 				  thisMenu = thisMenu.children[indexArray[i]];
 			  }
@@ -288,6 +258,7 @@
 			    	if(res.status==200){
 				    	if(res.data.state=="ok"){
 				    		_this.menus = res.data.menus;
+				    		_this.left_menu = res.data.menus[0].children
 					    }else{
 					    	this.$message.error(res.data.msg);
 						}
