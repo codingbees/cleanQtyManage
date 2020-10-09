@@ -56,7 +56,7 @@
 						      			header-align="center"
 								      	show-overflow
 								      	show-header-overflow
-								      	v-bind="item.type!='file'?(item.is_update&&p_data_object.is_line_update?
+								      	v-bind="item.type!='file'?(item.is_line_update&&p_data_object.is_line_update?
 									      	(item.type=='input'?{'edit-render':{name: 'EditDownTextarea'}}:
 									      	 item.type=='select'||item.type=='radio'?{'edit-render':{name: '$select', options: parent_selectList[index], optionProps: {value: 'value', label: 'label'}}}:
 									      	 item.type=='switch'?{'cell-render':{name: '$switch',events:{change:parentEditClosedEvent}}}:
@@ -113,7 +113,7 @@
 								      	:align="item.align"
 						      			header-align="center"
 								      	show-overflow
-								      	v-bind="item.type!='file'?(item.is_update&&s_data_object.is_line_update?
+								      	v-bind="item.type!='file'?(item.is_line_update&&s_data_object.is_line_update?
 									      	(item.type=='input'?{'edit-render':{name: 'EditDownTextarea'}}:
 									      	 item.type=='select'||item.type=='radio'?{'edit-render':{name: '$select', options: son_selectList[index], optionProps: {value: 'value', label: 'label'}}}:
 									      	 item.type=='switch'?{'cell-render':{name: '$switch',events:{change:parentEditClosedEvent}}}:
