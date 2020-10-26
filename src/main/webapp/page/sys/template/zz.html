@@ -67,7 +67,7 @@
 											 item.type=='select'||item.type=='radio'?{'cell-render':{name:'cell-select',options: parent_selectList[index]}}:
 											 item.type=='switch'?{'cell-render':{name:'cell-switch'}}:'')
 											 
-											 :item.is_update&&p_data_object.is_update?{'cell-render':{name: '$button',props:{status:'primary',size:'small',content:'查看',itemInfo:item},events:{click:parent_fileEdit}}}:
+											 :item.is_line_update&&p_data_object.is_line_update?{'cell-render':{name: '$button',props:{status:'primary',size:'small',content:'查看',itemInfo:item},events:{click:parent_fileEdit}}}:
 											 {'cell-render':{name: '$button',props:{status:'primary',size:'small',content:'查看'},events:{click:parent_fileScan}}}">
 								      </vxe-table-column>
 								      <vxe-table-column
@@ -81,7 +81,7 @@
 									      	<el-button v-if="s_data_object.is_add" type="primary" size="mini" @click="sonAddInit(scope.row)">新增子数据</el-button>
 									      	<el-button v-for="item in p_lineButtons" v-if="item.is_show&&lineButtonAuth(item,scope.row)" size="mini" :type="item.color" :icon="item.icon" @click="item.type==1?lineButtonConfirmClick(scope.row,item):item.type==2?lineButtonComboboxClick(scope.row,item):lineButtonDialogClick(scope.row,item)">{{item.name}}</el-button>
 									        <el-button type="primary" v-if="p_data_object.is_update" size="mini" icon="el-icon-edit" @click="parentEditInit(scope.row)" circle></el-button>
-									        <el-button type="danger" size="mini" v-if="p_data_object.is_delete" icon="el-icon-delete" @click="del(scope.row,'#(menu.data_object_id)')" circle></el-button>
+									        <el-button type="danger" size="mini" v-if="p_data_object.is_delete" icon="el-icon-delete" @click="del(scope.row,menu.data_object_id)" circle></el-button>
 									      </template>
 									  </vxe-table-column>
 								    </vxe-grid>
@@ -124,7 +124,7 @@
 											 item.type=='select'||item.type=='radio'?{'cell-render':{name:'cell-select',options: son_selectList[index]}}:
 											 item.type=='switch'?{'cell-render':{name:'cell-switch'}}:'')
 											 
-											 :item.is_update&&s_data_object.is_update?{'cell-render':{name: '$button',props:{status:'primary',size:'small',content:'查看'},events:{click:son_fileEdit}}}:
+											 :item.is_line_update&&s_data_object.is_line_update?{'cell-render':{name: '$button',props:{status:'primary',size:'small',content:'查看'},events:{click:son_fileEdit}}}:
 											 {'cell-render':{name: '$button',props:{status:'primary',size:'small',content:'查看'},events:{click:son_fileScan}}}">
 								      </vxe-table-column>
 								      <vxe-table-column
@@ -138,7 +138,7 @@
 									      <template slot-scope="scope">
 									      	<el-button v-for="item in s_lineButtons" size="mini" :type="item.color" :icon="item.icon" @click="item.type==1?lineButtonConfirmClick(scope.row,item):item.type==2?lineButtonComboboxClick(scope.row,item):lineButtonDialogClick(scope.row,item)">{{item.name}}</el-button>
 									        <el-button type="primary" v-if="s_data_object.is_update" size="mini" icon="el-icon-edit" @click="sonEditInit(scope.row)" circle></el-button>
-									        <el-button type="danger" v-if="s_data_object.is_delete" size="mini" icon="el-icon-delete" @click="del(scope.row,'#(menu.son_data_object_id)')" circle></el-button>
+									        <el-button type="danger" v-if="s_data_object.is_delete" size="mini" icon="el-icon-delete" @click="del(scope.row,menu.son_data_object_id)" circle></el-button>
 									      </template>
 									  </vxe-table-column>
 								    </vxe-grid>
