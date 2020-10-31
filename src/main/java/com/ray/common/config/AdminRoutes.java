@@ -3,7 +3,6 @@ package com.ray.common.config;
 import com.jfinal.config.Routes;
 import com.ray.common.controller.CommonController;
 import com.ray.common.controller.MainController;
-import com.ray.common.controller.system.DingLoginController;
 import com.ray.common.controller.system.OsController;
 import com.ray.common.controller.system.SysController;
 
@@ -20,7 +19,6 @@ public class AdminRoutes extends Routes {
 		this.setBaseViewPath("/page");
 		this.add("/", MainController.class);
 		this.add("/sys", SysController.class, "sys");
-		this.add("/dl",DingLoginController.class);
 		this.add("/os",OsController.class,"sys");
 		this.add("/common",CommonController.class);
 	}

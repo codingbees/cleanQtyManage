@@ -1,4 +1,4 @@
-package com.ray.common.controller.system;
+package com.ray.common.ding.controller;
 
 
 import org.apache.shiro.SecurityUtils;
@@ -21,7 +21,7 @@ import com.ray.common.model.UserRole;
 import com.ray.common.ding.AccessTokenUtil;
 import com.taobao.api.ApiException;
 
-public class DingLoginController extends Controller {
+public class PCLoginController extends Controller {
 	/**
 	 * WEB端扫码登录
 	 * @throws ApiException
