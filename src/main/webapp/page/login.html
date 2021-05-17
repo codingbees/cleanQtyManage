@@ -103,7 +103,7 @@
        if(origin == "https://login.dingtalk.com" ) { //判断是否来自ddLogin扫码事件。
            var loginTmpCode = event.data; //拿到loginTmpCode后就可以在这里构造跳转链接进行跳转了
            vm.$message('正在登录中，请稍候...');
-           location.href = "https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=dingoawhk0qy7xdambxeqc&response_type=code&scope=snsapi_login&state=STATE&redirect_uri=#(system_url)/dl&loginTmpCode="+loginTmpCode;
+           location.href = "https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=dingoat1x02jmulp4g3586&response_type=code&scope=snsapi_login&state=STATE&redirect_uri=#(system_url)/dl&loginTmpCode="+loginTmpCode;
        }
 
 	};
@@ -126,7 +126,7 @@
 		  watch:{
 			  dialogVisible:function(){
 				  this.$nextTick(()=>{
-					  var url = encodeURIComponent("https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=dingoawhk0qy7xdambxeqc&response_type=code&scope=snsapi_login&state=STATE&redirect_uri=#(system_url)/dl");
+					  var url = encodeURIComponent("https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid=dingoat1x02jmulp4g3586&response_type=code&scope=snsapi_login&state=STATE&redirect_uri=#(system_url)/dl");
 						var obj = DDLogin({
 						     id:"login_container",//这里需要你在自己的页面定义一个HTML标签并设置id，例如<div id="login_container"></div>或<span id="login_container"></span>
 						     goto: url,

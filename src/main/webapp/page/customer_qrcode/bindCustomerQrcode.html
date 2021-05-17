@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="/layuiadmin/main.js"></script>
+</head>
+<body>
+<div id="app" style="padding:20px">
+    <el-row :gutter="15">
+        <el-col :span="6">
+			<el-card class="box-card">
+	        	<div slot="header" class="clearfix">
+			    	<span>客户盒标签绑定</span>
+			  	</div>
+				<el-form size="medium" label-width="100px">
+			  	  <el-form-item  label="产品图号">
+					<el-cascader :options="products" :props="{ expandTrigger: 'hover' }" @change="handleChange"></el-cascader>
+				  </el-form-item>
+	              <el-form-item label="扫描盒标签">
+	                <el-input id="scan_in" v-model="barcode" placeholder="请扫描客户盒标签/内部盒标签" @keyup.enter.native="getCleanBinding($event)" :style="{width: '100%'}"></el-input>
+	              </el-form-item>
+	              <el-form-item label="内部盒标签">
+	                <div class="tag-group">
+					  <el-tag effect="dark">
+			    		{{item.inside_code}}
+					  </el-tag>
+					</div>
+	              </el-form-item>
+	              <el-form-item label="客户盒标签">
+	                <div class="tag-group">
+					  <el-tag type="success" effect="dark">
+			    		{{item.customer_code}}
+					  </el-tag>
+					</div>
+	              </el-form-item>
+		         	<el-col :span="24">
+			            <div style="color:red">说明：</div>
+			            <div style="color:red">1、请正确产品件号和 发货基地/客户/产品状态/包装方式等信息；</div>
+			            <div style="color:red;margin-bottom:10px">2、扫码时请关闭输入法并保持光标在扫描框；</div>
+		            </el-col> 
+	            </el-form>			        	           
+			</el-card>
+       	</el-col>
+    	<el-card class="box-card">
+        	<div slot="header" class="clearfix">
+		    	<span>绑定历史</span>
+		  	</div>
+	       	<el-col :span="18">
+		       	<el-table :data="history" style="width: 100%">
+			      <el-table-column prop="productno" label="零件号" width="180"></el-table-column>
+			      <el-table-column prop="type" label="类型" width="180"></el-table-column>
+			      <el-table-column prop="inside_code" label="内部盒标签" width="240"></el-table-column>
+			      <el-table-column prop="customer_code" label="客户盒标签" width="240"></el-table-column>
+			    </el-table>
+		    </el-col>
+	  	</el-card>
+   	</el-row>
+</div>
+<script>
+		    
+	var vm = new Vue({
+	  el: '#app',
+	  data: {
+		  products:[],
+		  item:{productno:'',type:'',inside_code:'',customer_code:''},
+		  rule:'',
+		  barcode:'',
+		  history:[],
+	  },
+	  mounted() {
+		  this.getProducts();
+	  },
+	  watch: { 
+	  },
+	  methods:{
+		  	getProducts(){
+		  		var _this = this;
+		  		axios.get('/CustomerQrcode/getProducts',{
+	  			}).then(function(res){
+			    	_this.products =res.data;
+			    }).catch(function (error) {
+			        console.log(error);
+			    });
+		  	},
+		  	handleChange(value) {
+		  		var _this = this;
+		  		_this.item.productno = value[0],
+		  		_this.item.type = value[1],
+		        axios.get('/CustomerQrcode/getRule',{
+		        	params:{
+		        		productno:value[0],
+		        		type:value[1],
+			        }
+	  			}).then(function(res){
+			    	_this.rule =res.data;
+			    }).catch(function (error) {
+			        console.log(error);
+			    });
+	      	},
+		  	getCleanBinding(e){
+		  		var _this = this;
+		  		console.log(_this.barcode);
+		  		console.log(_this.rule['inside_code_fixed']);
+		  		console.log(_this.barcode.indexOf(_this.rule['inside_code_fixed'])!=-1);
+		  		console.log(_this.barcode.length==_this.rule['inside_code_length']);
+			  	if(_this.barcode.indexOf(_this.rule['inside_code_fixed'])!=-1&&_this.barcode.length==_this.rule['inside_code_length']){
+			  		_this.item.inside_code = _this.barcode;
+			  		_this.barcode="";
+			  	}else if(_this.barcode.indexOf(_this.rule['customer_code_fixed'])!=-1&&_this.barcode.length==_this.rule['customer_code_length']){
+			  		_this.item.customer_code = _this.barcode;
+			  		_this.barcode="";
+			  	}else{
+			  		_this.$message.error('二维码不是内部盒标签二维码/客户盒标签二维码');
+			  	}
+			  	if(_this.item.customer_code!=""&&_this.item.inside_code!=""){
+			  		axios.get('/CustomerQrcode/bindCustomerQrcode',{
+			        	params:_this.item
+		  			}).then(function(res){
+			  			if(res.data.state=="ok"){
+			  				var a = JSON.parse(JSON.stringify(_this.item));
+			  				_this.history.unshift(a);
+			  				_this.item.inside_code="";
+			  				_this.item.customer_code="";
+			  				_this.$message("绑定成功");
+			  			}else{
+			  				_this.$message.error(res.data.msg);
+			  				_this.item.inside_code="";
+			  				_this.item.customer_code="";
+			  			}
+				    }).catch(function (error) {
+				        console.log(error);
+				    });
+			  	}
+			  	
+		  	}
+		}
+  	})
+</script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="/layuiadmin/main.js"></script>
+</head>
+<body>
+<div id="app" style="padding:20px">
+    <el-row :gutter="15">
+        <el-col :span="8">
+			<el-card class="box-card">
+	        	<div slot="header" class="clearfix">
+			    	<span>设备上料</span>
+			  	</div>
+     			<el-form ref="equipFeeding" size="medium" label-width="100px" :model="equipFeeding" @submit.native.prevent>
+     				<el-col :span="18">
+		              <el-form-item label="车间" prop="workshop">
+		                <el-select v-model="equipFeeding.workshop" placeholder="请选择车间" clearable :style="{width: '100%'}">
+		                  <el-option v-for="(item, index) in workshop" :key="index" :label="item.label" :value="item.value"></el-option>
+		                </el-select>
+		              </el-form-item>
+		            </el-col>
+		            <el-col :span="18">
+		              <el-form-item label="产线" prop="productline">
+		                <el-select v-model="equipFeeding.productline" placeholder="请选择产线" clearable :style="{width: '100%'}">
+		                  <el-option v-for="(item, index) in productline" :key="index" :label="item.label" :value="item.value"></el-option>
+		                </el-select>
+		              </el-form-item>
+		            </el-col>
+		            <el-col :span="18">
+		              <el-form-item label="产品" prop="product_no">
+		                <el-select v-model="equipFeeding.product_no" placeholder="请选择产品" clearable :style="{width: '100%'}">
+		                  <el-option v-for="(item, index) in product_no" :key="index" :label="item.label" :value="item.value"></el-option>
+		                </el-select>
+		              </el-form-item>
+		            </el-col>
+		            
+			        <el-col :span="18">
+		              <el-form-item label="扫描清洗框">
+		                <el-input id="scan_in" v-model="barcode" placeholder="请扫描清洗框二维码进行上料" @keyup.enter.native="getCleanBinding($event)" :style="{width: '100%'}"></el-input>
+		              </el-form-item>
+			        </el-col>
+			        <el-col :span="24">
+		              <el-form-item label="清洗框标签">
+		                <div class="tag-group">
+						  <el-tag effect="dark">
+				    		{{equipFeeding.clean_box_no}}
+						  </el-tag>
+						</div>
+		              </el-form-item>
+		            </el-col>
+		            
+		            <el-col :span="12">
+		              <el-form-item label="零件号：">
+		                <div class="tag-group">
+						  <el-tag type="success" effect="dark">
+				    		{{equipFeeding.part_no}}
+						  </el-tag>
+						</div>
+		              </el-form-item>
+		            </el-col>
+		            <el-col :span="12">
+		              <el-form-item label="批次号：">
+		                <div class="tag-group">
+						  <el-tag type="success" effect="dark">
+				    		{{equipFeeding.batch_no}}
+						  </el-tag>
+						</div>
+		              </el-form-item>
+		            </el-col>
+		            <el-col :span="12">
+		              <el-form-item label="数量：">
+		                <div class="tag-group">
+						  <el-tag type="info" effect="dark">
+				    		{{equipFeeding.part_no}}
+						  </el-tag>
+						</div>
+		              </el-form-item>
+		            </el-col>
+		            <el-col :span="12">
+		              <el-form-item label="绑定时间：">
+		                <div class="tag-group">
+						  <el-tag type="info" effect="dark">
+				    		{{equipFeeding.create_time}}
+						  </el-tag>
+						</div>
+		              </el-form-item>
+		            </el-col>
+		         	<el-col :span="24">
+			            <!--<el-form-item>
+			                <el-button type="primary" icon="el-icon-check" size="medium" @click="doFeeding('equipFeeding')">设备上料</el-button>
+			            </el-form-item>-->
+			            <div style="color:red">说明：</div>
+			            <div style="color:red">1、请正确选择车间和产线；</div>
+			            <div style="color:red;margin-bottom:10px">2、扫码时请关闭输入法并保持光标在扫描框；</div>
+		            </el-col> 
+	            </el-form>			        	           
+			</el-card>
+       	</el-col>
+    	<el-card class="box-card">
+        	<div slot="header" class="clearfix">
+		    	<span>上料历史</span>
+		  	</div>
+	       	<el-col :span="16">
+		       	<el-table :data="history" style="width: 100%">
+			      <el-table-column prop="clean_box_no" label="清洗框编号" width="180"></el-table-column>
+			      <el-table-column prop="part_no" label="零件号" width="180"></el-table-column>
+			      <el-table-column prop="batch_no" label="批次号" width="180"></el-table-column>
+			      <el-table-column prop="quantity" label="数量" width="180"></el-table-column>
+			    </el-table>
+		    </el-col>
+	  	</el-card>
+   	</el-row>
+</div>
+<script>
+		    
+	var vm = new Vue({
+	  el: '#app',
+	  data: {
+		barcode:"",
+		equipFeeding:{clean_box_no:'',quantity:'',batch_no:'',part_no:'',workshop:'',productline:'',create_time:'',product_no:''},
+		history:[],
+		workshop:[],
+		productline:[],
+		product_no:[],
+		
+	  },
+	  mounted() {
+		  document.getElementById('scan_in').focus();
+		  this.getWorkshop();
+	  },
+	  watch: { 
+		  'equipFeeding.workshop':function (newVal, oldVal){
+		  		var _this = this;
+		  		axios.get('/equipFeeding/getProductline',{
+		  			 params:{
+		  				workshop:newVal
+			        }
+	  			}).then(function(res){
+			    	_this.productline =res.data;
+			    	_this.equipFeeding.productline='';
+			    }).catch(function (error) {
+			        console.log(error);
+			    });
+		  	},
+		  	'equipFeeding.productline':function (newVal, oldVal){
+		  		var _this = this;
+		  		axios.get('/productAssemble/getProduct',{
+		  			 params:{
+		  				productline:newVal
+			        }
+	  			}).then(function(res){
+			    	_this.product_no =res.data;
+			    	_this.equipFeeding.product_no='';
+			    }).catch(function (error) {
+			        console.log(error);
+			    });
+		  	}
+	  },
+	  methods:{
+		  	getWorkshop(){
+		  		var _this = this;
+		  		axios.get('/equipFeeding/getWorkshop').then(function(res){
+			    	_this.workshop =res.data;
+			    }).catch(function (error) {
+			        console.log(error);
+			    });
+		  	},
+		  	
+		  	getCleanBinding(e){
+		  		var _this = this;
+			  	axios.get('/cleanBinding/getCleanBinding',{       // 还可以直接把参数拼接在url后边
+			        params:{
+			        	clean_box_no:_this.barcode
+			        }
+			    }).then(function(res){
+				    console.log(res)
+				    if(res.data.code==1){
+				    	_this.equipFeeding.quantity =res.data.clean_binding.quantity;
+				    	_this.equipFeeding.batch_no =res.data.clean_binding.batch_no;
+				    	_this.equipFeeding.create_time =res.data.clean_binding.create_time;
+				    	_this.equipFeeding.part_no =res.data.clean_binding.part_no;
+				    	_this.equipFeeding.clean_box_no =res.data.clean_binding.clean_box_no;
+				    	_this.barcode="";
+				    	_this.doFeeding(_this.equipFeeding)
+				    }else{
+				    	_this.barcode="";
+				    	_this.$message.error(res.data.msg);
+				    }
+			    }).catch(function (error) {
+			        console.log(error);
+			    });
+		    },
+		    doFeeding(equipFeeding){
+		  		var _this = this;
+		  		if(_this.equipFeeding.clean_box_no==null||_this.equipFeeding.clean_box_no==""){
+		  			_this.$message.error("请扫描清洗框标签");
+		  		}else if(_this.equipFeeding.workshop==null||_this.equipFeeding.workshop==""){
+		  			_this.$message.error("请选择车间");
+		  		}else if(_this.equipFeeding.productline==null||_this.equipFeeding.productline==""){
+		  			_this.$message.error("请选择产线");
+		  		}else{
+			  		axios.get('/equipFeeding/doFeeding',{       // 还可以直接把参数拼接在url后边
+				        params:_this.equipFeeding
+				    }).then(function(res){
+					    if(res.data.code==1){
+				    		var a = JSON.parse(JSON.stringify(_this.equipFeeding));
+				    		_this.history.unshift(a);
+			    			_this.equipFeeding={clean_box_no:'',quantity:'',batch_no:'',part_no:'',workshop:_this.equipFeeding.workshop,product_no:_this.equipFeeding.product_no,productline:_this.equipFeeding.productline,create_time:''};
+					    	_this.$message({
+					            message: res.data.msg,
+					            type: 'success'
+				          	});
+					    }else{
+					    	_this.$message.error(res.data.msg);
+					    }
+					    document.getElementById('scan_in').focus();
+				    }).catch(function (error) {
+				        console.log(error);
+				    });			  			
+		  		}
+		  	},		  		  
+		}
+  	})
+</script>
+</body>
+</html>

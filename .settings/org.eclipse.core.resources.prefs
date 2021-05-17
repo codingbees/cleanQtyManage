@@ -2,6 +2,7 @@ eclipse.preferences.version=1
 encoding/._jbolt.properties=utf-8
 encoding//src/main/java=UTF-8
 encoding//src/main/java/com/ray/common/config/AdminRoutes.java=utf-8
+encoding//src/main/java/com/ray/common/config/AppRoutes.java=utf-8
 encoding//src/main/java/com/ray/common/config/BaseRoutes.java=utf-8
 encoding//src/main/java/com/ray/common/config/DDRoutes.java=utf-8
 encoding//src/main/java/com/ray/common/config/MainConfig.java=utf-8

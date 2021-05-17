@@ -1,18 +1,20 @@
 package com.ray.common.controller;
 
-import com.jfinal.core.NotAction;
-import com.jfinal.kit.Ret;
-import com.jfinal.plugin.activerecord.Db;
-import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.redis.Redis;
-import com.taobao.api.ApiException;
 import java.util.List;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+
+import com.jfinal.core.NotAction;
+import com.jfinal.kit.Ret;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.redis.Redis;
+import com.taobao.api.ApiException;
 
 public class MainController extends BaseController{
 	
@@ -40,6 +42,8 @@ public class MainController extends BaseController{
 	}
 
 	public void loginInit() {
+		String serverIp = getRequest().getServerName();
+		Integer serverPort = getRequest().getServerPort();
 		if(getPara("code")!=null){
 			setAttr("code", getPara("code"));
 			setAttr("icon", getPara("icon"));

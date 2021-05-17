@@ -12,13 +12,13 @@ Table: data_button
  color          | VARCHAR(255) | YES  |     |         | 按钮样式    
  tip            | TEXT(65535)  | NO   |     |         | 按钮提示信息  
  dialog_title   | VARCHAR(255) | YES  |     |         | dialog标题
- dialog_width   | VARCHAR(255) | YES  |     | 600px   | dialog宽度
- dialog_height  | VARCHAR(255) | YES  |     | 50%     | dialog高度
+ dialog_width   | VARCHAR(255) | YES  |     |         | dialog宽度
  dialog_src     | VARCHAR(255) | YES  |     |         | dialog地址
  action         | VARCHAR(255) | NO   |     |         | 按钮访问后端action
  auth_role      | VARCHAR(255) | YES  |     |         | 角色标识权限集合
  auth_row       | VARCHAR(255) | YES  |     |         | 行内权限    
  is_show        | BIT          | NO   |     | 1       | 是否显示    
+ dialog_height  | VARCHAR(255) | YES  |     |         |         
 ----------------+--------------+------+-----+---------+---------
 
 Table: data_field
@@ -77,7 +77,7 @@ Table: data_object
  is_line_update | BIT          | NO   |     | 1                 | 是否可行内修改 
  is_delete      | BIT          | NO   |     | 1                 | 是否删除    
  is_handle      | BIT          | NO   |     | 1                 | 是否拥有操作列 
- handle_width   | VARCHAR(255) | YES  |     | 60                | 操作列宽度   
+ handle_width   | VARCHAR(255) | YES  |     | 100               | 操作列宽度   
  create_time    | DATETIME(19) | NO   |     | CURRENT_TIMESTAMP | 创建时间    
 ----------------+--------------+------+-----+-------------------+---------
 
@@ -175,6 +175,171 @@ Table: serial_number
  ingredient_plan_no | INT(10) | NO   |     | 1       | 配料单号    
  cust_order_no      | INT(10) | NO   |     | 1       | 客户订单号   
 --------------------+---------+------+-----+---------+---------
+
+Table: trace_basedata_part
+----------------------+--------------+------+-----+---------+---------
+ Field                | Type         | Null | Key | Default | Remarks 
+----------------------+--------------+------+-----+---------+---------
+ id                   | INT(10)      | NO   | PRI |         | ID      
+ part_no              | VARCHAR(255) | YES  |     |         | 零部件号    
+ part_desc            | VARCHAR(255) | YES  |     |         |         
+ product_id           | INT(10)      | YES  |     |         | 产品编号    
+ consumption_quantity | VARCHAR(11)  | YES  |     |         | 消耗数量    
+ feeding_quantity     | VARCHAR(11)  | YES  |     |         | 清洗数量    
+----------------------+--------------+------+-----+---------+---------
+
+Table: trace_basedata_product
+----------------+--------------+------+-----+---------+---------
+ Field          | Type         | Null | Key | Default | Remarks 
+----------------+--------------+------+-----+---------+---------
+ id             | INT(10)      | NO   | PRI |         | ID      
+ product_no     | VARCHAR(255) | YES  |     |         | 成品件号    
+ product_desc   | VARCHAR(255) | YES  |     |         | 零件描述    
+ productline_id | INT(10)      | NO   |     |         | 产线编号    
+----------------+--------------+------+-----+---------+---------
+
+Table: trace_basedata_product_gp12rule
+----------------+--------------+------+-----+---------+---------
+ Field          | Type         | Null | Key | Default | Remarks 
+----------------+--------------+------+-----+---------+---------
+ id             | INT(10)      | NO   | PRI |         | ID      
+ product_id     | INT(10)      | YES  |     |         | 产品编号    
+ product_length | VARCHAR(11)  | YES  |     |         | 产品长度    
+ product_rule   | VARCHAR(255) | YES  |     |         | 产品固定字段  
+ box_length     | VARCHAR(11)  | YES  |     |         | 盒标签长度   
+ box_rule       | VARCHAR(255) | YES  |     |         | 盒标签固定字段 
+ quantity       | VARCHAR(11)  | YES  |     |         | 打包数量    
+----------------+--------------+------+-----+---------+---------
+
+Table: trace_basedata_product_rule
+----------------+--------------+------+-----+---------+---------
+ Field          | Type         | Null | Key | Default | Remarks 
+----------------+--------------+------+-----+---------+---------
+ id             | INT(10)      | NO   | PRI |         | ID      
+ product_id     | INT(10)      | YES  |     |         | 产品编号    
+ product_length | VARCHAR(11)  | YES  |     |         | 产品长度    
+ product_rule   | VARCHAR(255) | YES  |     |         | 产品固定字段  
+ box_length     | VARCHAR(11)  | YES  |     |         | 盒标签长度   
+ box_rule       | VARCHAR(255) | YES  |     |         | 盒标签固定字段 
+ quantity       | VARCHAR(11)  | YES  |     |         | 打包数量    
+----------------+--------------+------+-----+---------+---------
+
+Table: trace_basedata_productline
+-------------+--------------+------+-----+---------+---------
+ Field       | Type         | Null | Key | Default | Remarks 
+-------------+--------------+------+-----+---------+---------
+ id          | INT(10)      | NO   | PRI |         | ID      
+ productline | VARCHAR(255) | YES  |     |         | 产线      
+ workshop_id | INT(10)      | NO   |     |         | 车间编号    
+-------------+--------------+------+-----+---------+---------
+
+Table: trace_basedata_workshop
+----------+--------------+------+-----+---------+---------
+ Field    | Type         | Null | Key | Default | Remarks 
+----------+--------------+------+-----+---------+---------
+ id       | INT(10)      | NO   | PRI |         | ID      
+ workshop | VARCHAR(255) | YES  |     |         | 车间      
+----------+--------------+------+-----+---------+---------
+
+Table: trace_workflow_assemble
+----------------+--------------+------+-----+---------+---------
+ Field          | Type         | Null | Key | Default | Remarks 
+----------------+--------------+------+-----+---------+---------
+ id             | INT(10)      | NO   | PRI |         | ID      
+ workshop_id    | INT(10)      | YES  |     |         | 车间      
+ productline_id | INT(10)      | YES  |     |         | 产线      
+ product_id     | INT(10)      | YES  |     |         | 产品编号    
+ barcode        | VARCHAR(255) | YES  |     |         | 产品二维码   
+ create_time    | DATETIME(19) | YES  |     |         | 绑定时间    
+----------------+--------------+------+-----+---------+---------
+
+Table: trace_workflow_assemble_detail
+-------------+--------------+------+-----+---------+---------
+ Field       | Type         | Null | Key | Default | Remarks 
+-------------+--------------+------+-----+---------+---------
+ id          | INT(10)      | NO   | PRI |         |         
+ assemble_id | INT(10)      | YES  |     |         | 绑定产品ID  
+ part_no     | VARCHAR(255) | YES  |     |         | 子部件     
+ batch_no    | VARCHAR(255) | YES  |     |         | 子部件批次号  
+ quantity    | INT(10)      | YES  |     |         | 数量      
+-------------+--------------+------+-----+---------+---------
+
+Table: trace_workflow_cleanbinding
+--------------+--------------+------+-----+---------+---------
+ Field        | Type         | Null | Key | Default | Remarks 
+--------------+--------------+------+-----+---------+---------
+ id           | INT(10)      | NO   | PRI |         | ID      
+ part_no      | VARCHAR(255) | YES  |     |         | 零件号     
+ batch_no     | VARCHAR(255) | YES  |     |         | 批次号     
+ quantity     | VARCHAR(255) | YES  |     |         | 数量      
+ clean_box_no | VARCHAR(255) | YES  |     |         | 清洗框二维码  
+ create_time  | DATETIME(19) | YES  |     |         | 清洗绑定时间  
+--------------+--------------+------+-----+---------+---------
+
+Table: trace_workflow_customer_qrcode_history
+---------------+--------------+------+-----+---------+---------
+ Field         | Type         | Null | Key | Default | Remarks 
+---------------+--------------+------+-----+---------+---------
+ id            | INT(10)      | NO   | PRI |         | ID      
+ inside_code   | VARCHAR(255) | YES  |     |         | 内部二维码   
+ customer_code | VARCHAR(255) | YES  |     |         | 客户二维码   
+ productno     | VARCHAR(255) | YES  |     |         | 产品编号    
+ type          | VARCHAR(255) | YES  |     |         | 类别      
+ create_time   | DATETIME(19) | YES  |     |         | 绑定时间    
+---------------+--------------+------+-----+---------+---------
+
+Table: trace_workflow_customer_qrcode_rule
+----------------------+--------------+------+-----+---------+---------
+ Field                | Type         | Null | Key | Default | Remarks 
+----------------------+--------------+------+-----+---------+---------
+ id                   | INT(10)      | NO   | PRI |         | ID      
+ productno            | VARCHAR(255) | YES  |     |         | 零件号     
+ productname          | VARCHAR(255) | YES  |     |         | 零件名称    
+ type                 | VARCHAR(255) | YES  |     |         | 基地/包装/客户/产品状态区分
+ inside_code_fixed    | VARCHAR(255) | YES  |     |         | 内部二维码固定内容
+ inside_code_length   | VARCHAR(11)  | YES  |     |         | 内部二维码长度 
+ customer_code_fixed  | VARCHAR(255) | YES  |     |         | 客户二维码固定内容
+ customer_code_length | VARCHAR(11)  | YES  |     |         | 客户二维码长度 
+ remark               | VARCHAR(255) | YES  |     |         | 备注      
+----------------------+--------------+------+-----+---------+---------
+
+Table: trace_workflow_equipfeeding
+---------------+--------------+------+-----+---------+---------
+ Field         | Type         | Null | Key | Default | Remarks 
+---------------+--------------+------+-----+---------+---------
+ id            | INT(10)      | NO   | PRI |         |         
+ workshop      | INT(10)      | YES  |     |         | 车间      
+ productline   | INT(10)      | YES  |     |         | 产线      
+ part_no       | VARCHAR(255) | YES  |     |         | 子部件编码   
+ batch_no      | VARCHAR(255) | YES  |     |         | 批次号     
+ quantity      | INT(10)      | YES  |     |         | 数量      
+ clean_box_no  | VARCHAR(255) | YES  |     |         | 清洗框二维码  
+ cleaning_time | DATETIME(19) | YES  |     |         | 清洗绑定时间  
+ feeding_time  | DATETIME(19) | YES  |     |         | 设备上料时间  
+---------------+--------------+------+-----+---------+---------
+
+Table: trace_workflow_material_scrap
+----------------+--------------+------+-----+---------+---------
+ Field          | Type         | Null | Key | Default | Remarks 
+----------------+--------------+------+-----+---------+---------
+ id             | INT(10)      | NO   | PRI |         | ID      
+ workshop_id    | INT(10)      | YES  |     |         | 车间      
+ productline_id | INT(10)      | YES  |     |         | 产线      
+ product_id     | INT(10)      | YES  |     |         | 产品编号    
+ create_user    | VARCHAR(255) | YES  |     |         | 创建人     
+ create_time    | DATETIME(19) | YES  |     |         | 绑定时间    
+----------------+--------------+------+-----+---------+---------
+
+Table: trace_workflow_material_scrap_detail
+-------------+--------------+------+-----+---------+---------
+ Field       | Type         | Null | Key | Default | Remarks 
+-------------+--------------+------+-----+---------+---------
+ id          | INT(10)      | NO   | PRI |         |         
+ assemble_id | INT(10)      | YES  |     |         | 报废任务ID  
+ part_no     | VARCHAR(255) | YES  |     |         | 子部件     
+ batch_no    | VARCHAR(255) | YES  |     |         | 子部件批次号  
+ quantity    | INT(10)      | YES  |     |         | 数量      
+-------------+--------------+------+-----+---------+---------
 
 Table: user
 --------------+--------------+------+-----+-------------------+---------

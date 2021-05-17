@@ -1,34 +1,32 @@
 package com.ray.common.config;
 
 
+import com.alibaba.druid.filter.stat.StatFilter;
+import com.alibaba.druid.wall.WallFilter;
 import com.jfinal.config.Constants;
 import com.jfinal.config.Handlers;
 import com.jfinal.config.Interceptors;
 import com.jfinal.config.JFinalConfig;
 import com.jfinal.config.Plugins;
 import com.jfinal.config.Routes;
-import com.jfinal.kit.Prop;
-import com.jfinal.kit.PropKit;
-import com.jfinal.template.Engine;
 import com.jfinal.ext.interceptor.SessionInViewInterceptor;
 import com.jfinal.ext.plugin.shiro.ShiroInterceptor;
 import com.jfinal.ext.plugin.shiro.ShiroPlugin;
-import com.jfinal.server.undertow.UndertowServer;
-import com.jfinal.plugin.druid.DruidPlugin;
-import com.alibaba.druid.filter.stat.StatFilter;
-import com.alibaba.druid.wall.WallFilter;
+import com.jfinal.kit.Prop;
+import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
+import com.jfinal.plugin.druid.DruidPlugin;
 import com.jfinal.render.ViewType;
+import com.jfinal.server.undertow.UndertowServer;
+import com.jfinal.template.Engine;
+import com.ray.common.ding.DingController;
 import com.ray.common.interceptor.MetaObjectIntercept;
 import com.ray.common.model._MappingKit;
 import com.ray.common.quartz.QuartzPlugin;
 import com.ray.common.shiro.CustomAuth;
-import com.ray.common.ding.DingController;
 import com.ray.util.Commen;
-
-import net.dreamlu.event.EventPlugin;
 public class MainConfig extends JFinalConfig {
 	/**
 	 * 将全局配置提出来 方便其他地方重用
@@ -75,6 +73,7 @@ public class MainConfig extends JFinalConfig {
 		me.add(new AdminRoutes());//配置后台管理系统路由
 		me.add(new PCRoutes());//配置PC端业务路由
 		me.add(new DDRoutes());//配置钉钉E应用端业务路由
+		me.add(new AppRoutes());//配置钉钉E应用端业务路由
 		me.add(new BaseRoutes());//配置基础模板路由
 		this.routes = me;
 	}

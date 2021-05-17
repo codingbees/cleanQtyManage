@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="/layuiadmin/main.js"></script>
+</head>
+
+<body>
+<div id="app" style="padding:20px">
+    <el-row :gutter="15">
+        <el-col :span="8">
+	        <el-card class="box-card">
+	        	<div slot="header" class="clearfix">
+			    	<span>清洗框绑定</span>
+				  	<el-switch v-model="model" inactive-text="自动提交" style="float:right"> </el-switch>
+			  	</div>
+      			<el-form ref="clean_binding" size="medium" label-width="100px" :model="clean_binding">
+			        <el-col :span="18">
+		              <el-form-item label="二维码扫描">
+		                <el-input v-model="barcode" id="scan_in" placeholder="请扫描二维码" @keyup.enter.native="scan_in($event)"  :style="{width: '100%'}"></el-input>
+		              </el-form-item>
+			        </el-col>
+			        <el-col :span="24">
+		              <el-form-item label="清洗框标签">
+		                <div class="tag-group">
+						  <el-tag effect="dark">
+				    		{{clean_binding.clean_box_no}}
+						  </el-tag>
+						</div>
+		              </el-form-item>
+		            </el-col>
+		            
+		            <el-col :span="12">
+		              <el-form-item label="零件号：">
+		                <div class="tag-group">
+						  <el-tag type="success" effect="dark">
+				    		{{clean_binding.part_no}}
+						  </el-tag>
+						</div>
+		              </el-form-item>
+		            </el-col>
+		            <el-col :span="12">
+		              <el-form-item label="批次号：">
+		                <div class="tag-group">
+						  <el-tag type="success" effect="dark">
+				    		{{clean_binding.batch_no}}
+						  </el-tag>
+						</div>
+		              </el-form-item>
+		            </el-col>
+		            
+		            <el-col :span="18">
+		              <el-form-item label="数量">
+		                <el-input v-model="clean_binding.quantity" placeholder="请扫描零部件批次二维码或直接进行修改" type="number" style="width: '100%'"></el-input>
+		              </el-form-item>
+			        </el-col>
+		         	<el-col :span="24">
+			            <el-form-item>
+			                <el-button type="primary" icon="el-icon-check" size="medium" @click="submitForm('clean_binding')">提交绑定</el-button>
+			            </el-form-item>
+			            <div style="color:red">说明：</div>
+			            <div style="color:red">1、如果对于返修件需要修改数量,请关闭自动提交；</div>
+			            <div style="color:red">2、扫码时请关闭输入法并保持光标在扫描框；</div>
+			            <div style="margin-bottom:10px;color:red">3、如果绑定错误，请在下方解除清洗框绑定功能中扫描清洗框二维码，或复制右侧绑定历史清洗框二维码并点击回车，手动提交解除，解除后清洗框可重新绑定；</div>
+		            </el-col>	           
+	      		</el-form>
+			</el-card>
+			
+			<el-card class="box-card" style ="margin-top:20px">
+	        	<div slot="header" class="clearfix">
+			    	<span>解除清洗框绑定</span>
+			  	</div>
+     			<el-form ref="reDelete" size="medium" label-width="100px" :model="reDelete" @submit.native.prevent>
+			        <el-col :span="18">
+		              <el-form-item label="扫描清洗框">
+		                <el-input v-model="delete_barcode" placeholder="请扫描清洗框二维码解除绑定" @keyup.enter.native="getCleanBinding($event)" :style="{width: '100%'}"></el-input>
+		              </el-form-item>
+			        </el-col>
+			        <el-col :span="24">
+		              <el-form-item label="清洗框标签">
+		                <div class="tag-group">
+						  <el-tag effect="dark">
+				    		{{reDelete.clean_box_no}}
+						  </el-tag>
+						</div>
+		              </el-form-item>
+		            </el-col>
+		            
+		            <el-col :span="12">
+		              <el-form-item label="零件号：">
+		                <div class="tag-group">
+						  <el-tag type="success" effect="dark">
+				    		{{reDelete.part_no}}
+						  </el-tag>
+						</div>
+		              </el-form-item>
+		            </el-col>
+		            <el-col :span="12">
+		              <el-form-item label="批次号：">
+		                <div class="tag-group">
+						  <el-tag type="success" effect="dark">
+				    		{{reDelete.batch_no}}
+						  </el-tag>
+						</div>
+		              </el-form-item>
+		            </el-col>
+		            <el-col :span="12">
+		              <el-form-item label="数量：">
+		                <div class="tag-group">
+						  <el-tag type="info" effect="dark">
+				    		{{reDelete.quantity}}
+						  </el-tag>
+						</div>
+		              </el-form-item>
+		            </el-col>
+		            <el-col :span="12">
+		              <el-form-item label="绑定时间：">
+		                <div class="tag-group">
+						  <el-tag type="info" effect="dark">
+				    		{{reDelete.create_time}}
+						  </el-tag>
+						</div>
+		              </el-form-item>
+		            </el-col>
+		         	<el-col :span="24">
+			            <el-form-item>
+			                <el-button type="danger" icon="el-icon-check" size="medium" @click="deleteCleanBinding('reDelete')">提交解除</el-button>
+			            </el-form-item>
+		            </el-col>
+	            </el-form>			        	           
+			</el-card>
+       	</el-col>
+    	<el-card class="box-card">
+        	<div slot="header" class="clearfix">
+		    	<span>绑定历史</span>
+		  	</div>
+	       	<el-col :span="16">
+		       	<el-table :data="history" style="width: 100%">
+			      <el-table-column prop="clean_box_no" label="清洗框编号" width="180"></el-table-column>
+			      <el-table-column prop="part_no" label="零件号" width="180"></el-table-column>
+			      <el-table-column prop="batch_no" label="批次号" width="180"></el-table-column>
+			      <el-table-column prop="quantity" label="数量" width="180"></el-table-column>
+			    </el-table>
+		    </el-col>
+	  	</el-card>
+   	</el-row>
+</div>
+<script>
+		    
+	var vm = new Vue({
+	  el: '#app',
+	  data: {
+	    model:true,
+		barcode:"",
+		delete_barcode:"",
+		clean_binding:{clean_box_no:'',quantity:'',batch_no:'',part_no:''},
+		reDelete:{clean_box_no:'',quantity:'',batch_no:'',part_no:'',create_time:'',},
+		history:[],
+	  },
+	  mounted() {
+		  window.parent.app.dialogHeight = document.documentElement.offsetHeight+"px";
+		  document.getElementById('scan_in').focus();
+	  },
+	  methods:{
+		  	scan_in(e){
+		  		var _this = this;
+			  	axios.get('/cleanBinding/getBarcode',{       // 还可以直接把参数拼接在url后边
+			        params:{
+			        	barcode:_this.barcode
+			        }
+			    }).then(function(res){
+				    console.log(_this.model)
+				    if(res.data.code==1){
+				    	_this.clean_binding.clean_box_no =_this.barcode;
+				    	_this.barcode="";
+						if(_this.model){
+				    		_this.submitForm(_this.clean_binding)
+						}				    	
+				    }else if(res.data.code==2){
+				    	_this.clean_binding.quantity = res.data.quantity;
+				    	_this.clean_binding.part_no = res.data.part_no;
+				    	_this.clean_binding.batch_no = res.data.batch_no;
+				    	_this.barcode="";
+						if(_this.model){
+				    		_this.submitForm(_this.clean_binding)
+						}				    	
+				    }else{
+				    	_this.barcode="";
+				    	_this.$message.error(res.data.msg);
+				    }
+			    }).catch(function (error) {
+			        console.log(error);
+			    });
+		  	},
+		  	submitForm(clean_binding){
+		  		var _this = this;
+		  		if(_this.clean_binding.clean_box_no==null||_this.clean_binding.clean_box_no==""){
+		  			_this.$	.error("请扫描清洗框标签");
+		  		}else if(_this.clean_binding.batch_no==null||_this.clean_binding.batch_no==""){
+		  			_this.$message.error("请扫描物料二维码批次标签");
+		  		}else if(_this.clean_binding.quantity==null||_this.clean_binding.quantity==""){
+		  			_this.$message.error("数量不能为空");
+		  		}else{
+			  		axios.get('/cleanBinding/doCleanBinding',{       // 还可以直接把参数拼接在url后边
+				        params:_this.clean_binding
+				    }).then(function(res){
+					    if(res.data.code==1){
+			    			var a = JSON.parse(JSON.stringify(_this.clean_binding));
+					    	_this.history.unshift(a);
+		    				_this.clean_binding.clean_box_no ="";
+					    	_this.$message({
+					            message: res.data.msg,
+					            type: 'success'
+				          	});
+					    }else{
+					    	_this.$message.error(res.data.msg);
+					    }
+					    document.getElementById('scan_in').focus();
+				    }).catch(function (error) {
+				        console.log(error);
+				    });			  			
+		  		}
+		  	},
+		  	getCleanBinding(e){
+		  		var _this = this;
+			  	axios.get('/cleanBinding/getCleanBinding',{       // 还可以直接把参数拼接在url后边
+			        params:{
+			        	clean_box_no:_this.delete_barcode
+			        }
+			    }).then(function(res){
+				    console.log(res)
+				    if(res.data.code==1){
+				    	_this.reDelete =res.data.clean_binding;
+				    	_this.delete_barcode="";
+				    }else{
+				    	_this.$message.error(res.data.msg);
+				    }
+			    }).catch(function (error) {
+			        console.log(error);
+			    });
+		    },
+		    deleteCleanBinding(reDelete){
+		  		var _this = this;
+		  		if(_this.reDelete.clean_box_no==null||_this.reDelete.clean_box_no==""){
+		  			_this.$message.error("请扫描清洗框标签");
+		  		}else{
+			  		axios.get('/cleanBinding/deleteCleanBinding',{       // 还可以直接把参数拼接在url后边
+				        params:_this.reDelete
+				    }).then(function(res){
+			    		_this.reDelete={clean_box_no:'',quantity:'',batch_no:'',part_no:'',create_time:'',};
+					    if(res.data.code==1){
+					    	_this.$message({
+					            message: res.data.msg,
+					            type: 'success'
+				          	});
+					    }else{
+					    	_this.$message.error(res.data.msg);
+					    }
+					    document.getElementById('scan_in').focus();
+				    }).catch(function (error) {
+				        console.log(error);
+				    });			  			
+		  		}
+		  	},		  		  
+		}
+  	})
+</script>
+</body>
+</html>

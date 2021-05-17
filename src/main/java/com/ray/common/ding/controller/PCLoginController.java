@@ -4,6 +4,7 @@ package com.ray.common.ding.controller;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiSnsGetuserinfoBycodeRequest;
@@ -17,8 +18,8 @@ import com.dingtalk.api.response.OapiUserGetuserinfoResponse;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
-import com.ray.common.model.UserRole;
 import com.ray.common.ding.AccessTokenUtil;
+import com.ray.common.model.UserRole;
 import com.taobao.api.ApiException;
 
 public class PCLoginController extends Controller {
@@ -30,7 +31,7 @@ public class PCLoginController extends Controller {
 		DefaultDingTalkClient  client = new DefaultDingTalkClient("https://oapi.dingtalk.com/sns/getuserinfo_bycode");
 		OapiSnsGetuserinfoBycodeRequest req = new OapiSnsGetuserinfoBycodeRequest();
 		req.setTmpAuthCode(getPara("code"));
-		OapiSnsGetuserinfoBycodeResponse response = client.execute(req,"dingoawhk0qy7xdambxeqc","IYXWOiIegeBcGZGUWDbyAFOzigW80PrVJbQ7I4J6a7DCFHDbHG-N_hLLixD_-XJ9");
+		OapiSnsGetuserinfoBycodeResponse response = client.execute(req,"dingoat1x02jmulp4g3586","5YyuNbfv8YFt3HINxIkQBl-lTKRdUCNckOUHbErHk7n3qHjUAMT_dmBOx__Bz6qU");
 		String dingtoken = AccessTokenUtil.getToken();
 		//获取UserId
 		DingTalkClient client2 = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/getUseridByUnionid");
@@ -38,7 +39,6 @@ public class PCLoginController extends Controller {
 		request2.setUnionid(response.getUserInfo().getUnionid());
 		request2.setHttpMethod("GET");
 		OapiUserGetUseridByUnionidResponse userInfo = client2.execute(request2, dingtoken);
-		
 		if(0==userInfo.getErrcode()){
 			//获取用户详情
 			DingTalkClient client3 = new DefaultDingTalkClient("https://oapi.dingtalk.com/user/get");
@@ -56,7 +56,7 @@ public class PCLoginController extends Controller {
 				Db.save("user", user);
 				UserRole ur = new UserRole();
 				ur.setRoleId(2);
-				ur.setUserId(user.get("id"));
+				ur.setUserId(user.getInt("id"));
 				ur.save(); 
 			}
 			user.set("dingUserInfo", response3);

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="/layuiadmin/main.js"></script>
+</head>
+<body>
+<div id="app" style="padding:20px">
+    <el-row :gutter="15">
+        <el-col :span="8">
+			<el-card class="box-card">
+	        	<div slot="header" class="clearfix">
+			    	<span>成品扫码</span>
+			  	</div>
+     			<el-form ref="productAssemble" size="medium" label-width="100px" :model="productAssemble" @submit.native.prevent>
+     				<el-col :span="18">
+		              <el-form-item label="车间" prop="workshop">
+		                <el-select v-model="productAssemble.workshop" placeholder="请选择车间" clearable :style="{width: '100%'}">
+		                  <el-option v-for="(item, index) in workshop" :key="index" :label="item.label" :value="item.value"></el-option>
+		                </el-select>
+		              </el-form-item>
+		            </el-col>
+		            <el-col :span="18">
+		              <el-form-item label="产线" prop="productline">
+		                <el-select v-model="productAssemble.productline" placeholder="请选择产线" clearable :style="{width: '100%'}">
+		                  <el-option v-for="(item, index) in productline" :key="index" :label="item.label" :value="item.value"></el-option>
+		                </el-select>
+		              </el-form-item>
+		            </el-col>
+		            <el-col :span="18">
+		              <el-form-item label="产品" prop="product_no">
+		                <el-select v-model="productAssemble.product_no" placeholder="请选择产品" clearable :style="{width: '100%'}">
+		                  <el-option v-for="(item, index) in product_no" :key="index" :label="item.label" :value="item.value"></el-option>
+		                </el-select>
+		              </el-form-item>
+		            </el-col>
+			        <el-col :span="18">
+		              <el-form-item label="扫描成品码">
+		                <el-input id="scan_in" v-model="barcode" placeholder="请扫描成品二维码绑定相关物料" @keyup.enter.native="scanProduct($event)" :style="{width: '100%'}"></el-input>
+		              </el-form-item>
+			        </el-col>
+			        <el-col :span="24">
+			            <!--<el-form-item>
+			                <el-button type="primary" icon="el-icon-check" size="medium" @click="doFeeding('equipFeeding')">设备上料</el-button>
+			            </el-form-item>-->
+			            <div style="color:red">说明：</div>
+			            <div style="color:red">1、请正确选择车间、产线、产品；</div>
+			            <div style="color:red;margin-bottom:10px">2、扫码时请关闭输入法并保持光标在扫描框；</div>
+		            </el-col> 
+	            </el-form>			        	           
+			</el-card>
+       	</el-col>
+    	<el-card class="box-card">
+        	<div slot="header" class="clearfix">
+		    	<span>绑定历史</span>
+		  	</div>
+	       	<el-col :span="16">
+		       	<el-table :data="history" style="width: 100%">
+			      <el-table-column prop="barcode" label="零件二维码" width="180"></el-table-column>
+			      <el-table-column prop="create_time" label="绑定时间" width="180"></el-table-column>
+			    </el-table>
+		    </el-col>
+	  	</el-card>
+   	</el-row>
+</div>
+<script>
+		    
+	var vm = new Vue({
+	  el: '#app',
+	  data: {
+		barcode:"",
+		productAssemble:{barcode:'',workshop:'',productline:'',product_no:''},
+		history:[],
+		workshop:[],
+		productline:[],
+		product_no:[],
+		
+	  },
+	  mounted() {
+		  document.getElementById('scan_in').focus();
+		  this.getWorkshop();
+	  },
+	  watch: { 
+		  'productAssemble.workshop':function (newVal, oldVal){
+		  		var _this = this;
+		  		axios.get('/equipFeeding/getProductline',{
+		  			 params:{
+		  				workshop:newVal
+			        }
+	  			}).then(function(res){
+			    	_this.productline =res.data;
+			    	_this.productAssemble.productline='';
+			    }).catch(function (error) {
+			        console.log(error);
+			    });
+		  	},
+		  	'productAssemble.productline':function (newVal, oldVal){
+		  		var _this = this;
+		  		axios.get('/productAssemble/getProduct',{
+		  			 params:{
+		  				productline:newVal
+			        }
+	  			}).then(function(res){
+			    	_this.product_no =res.data;
+			    	_this.productAssemble.product_no='';
+			    }).catch(function (error) {
+			        console.log(error);
+			    });
+		  	}
+	  },
+	  methods:{
+		  	getWorkshop(){
+		  		var _this = this;
+		  		axios.get('/equipFeeding/getWorkshop').then(function(res){
+			    	_this.workshop =res.data;
+			    }).catch(function (error) {
+			        console.log(error);
+			    });
+		  	},
+		  	scanProduct(e){
+		  		var _this = this;
+		  		if(_this.productAssemble.workshop==null||_this.productAssemble.workshop==""){
+		  			_this.$message.error("请选择车间");
+		  		}else if(_this.productAssemble.productline==null||_this.productAssemble.productline==""){
+		  			_this.$message.error("请选择产线");
+		  		}else if(_this.productAssemble.product_no==null||_this.productAssemble.product_no==""){
+		  			_this.$message.error("请选择产品");
+		  		}else if(_this.barcode==null||_this.barcode==""){
+		  			_this.$message.error("请扫描产品二维码且不能为空");
+		  		}else{
+				  	axios.get('/productAssemble/scanProduct',{       // 还可以直接把参数拼接在url后边
+				        params:{
+				        	workshop:_this.productAssemble.workshop,
+				        	productline:_this.productAssemble.productline,
+				        	product_no:_this.productAssemble.product_no,
+				        	barcode:_this.barcode
+				        }
+				    }).then(function(res){
+				    	if(res.data.code==1){
+				    		_this.doProductAssemble(_this.productAssemble);
+					    }else if(res.data.code==2){
+				            _this.$confirm(res.data.msg, '提示', {
+				              confirmbuttontext: '确定覆盖',
+				              cancelbuttontext: '取消覆盖',
+				              type: 'warning'
+				            }).then(() => {
+			            		_this.doProductAssemble(_this.productAssemble);
+				            }).catch(() => {
+				              _this.$message({
+				                type: 'info',
+				                message: '已取消覆盖绑定'
+				              });          
+				            });
+					    }else{
+					    	_this.$message.error(res.data.msg);
+					    }
+				    	document.getElementById('scan_in').focus();
+				    	_this.barcode="";
+				    }).catch(function (error) {
+				        console.log(error);
+				    });
+		  		}
+		    },
+		    doProductAssemble(productAssemble){
+		  		var _this = this;
+		  		if(_this.productAssemble.workshop==null||_this.productAssemble.workshop==""){
+		  			_this.$message.error("请选择车间");
+		  		}else if(_this.productAssemble.productline==null||_this.productAssemble.productline==""){
+		  			_this.$message.error("请选择产线");
+		  		}else if(_this.productAssemble.product_no==null||_this.productAssemble.product_no==""){
+		  			_this.$message.error("请选择产品");
+		  		}else if(_this.barcode==null||_this.barcode==""){
+		  			_this.$message.error("请扫描产品二维码且不能为空");
+		  		}else{
+			  		axios.get('/productAssemble/doProductAssemble',{       // 还可以直接把参数拼接在url后边
+				        params:{
+					        workshop:_this.productAssemble.workshop,
+				        	productline:_this.productAssemble.productline,
+				        	product_no:_this.productAssemble.product_no,
+				        	barcode:_this.barcode
+				        }
+				    }).then(function(res){
+					    if(res.data.code==1){
+				    		_this.history.unshift(res.data.assemble);
+					    	_this.$message({
+					            message: res.data.msg,
+					            type: 'success'
+				          	});
+					    }else{
+					    	_this.$message.error(res.data.msg);
+					    }
+				    }).catch(function (error) {
+				        console.log(error);
+				    });			  			
+		  		}
+		  	},		  		  
+		}
+  	})
+</script>
+</body>
+</html>
