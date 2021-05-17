@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="Ray:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>Ray</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="Ray-1.0.0.war">
+      <element id="artifact" artifact-name="Ray:war exploded" />
+    </root>
+  </artifact>
+</component>

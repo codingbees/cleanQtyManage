@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="Ray" />
+        <module name="fljg_product_trace" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="fljg_product_trace" target="1.8" />
+      <module name="Ray" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Ray" options="-verbose -parameters" />
+      <module name="fljg_product_trace" options="-verbose -extdirs D:\dingding_workspace\fljg_product_trace/src/main/webapp/WEB-INF/lib -parameters" />
+    </option>
+  </component>
+</project>
