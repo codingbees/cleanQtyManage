@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+    <script src="/layuiadmin/main.js"></script>
+    <style>
+        .el-tag {
+            width: 150px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="app" style="padding:20px">
+    <el-row>
+        <el-button type="danger" @click="add">增加产品</el-button>
+        <el-button type="primary" @click="sub">提交计划</el-button>
+    </el-row>
+    <el-row :gutter="15">
+        <template>
+            <el-table
+                    :data="formData"
+                    style="width: 100%">
+                <el-table-column
+                        label="产品编号"
+                        width="180"
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-input style="width: 120px" v-model="scope.row.part_no"></el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        label="产品名称"
+                        width="180"
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-input style="width: 120px" v-model="scope.row.part_name"></el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        label="产品ID"
+                        width="180"
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-input style="width: 120px" v-model="scope.row.product_id"></el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        label="数量"
+                        width="180"
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-input style="width: 120px" v-model="scope.row.qty"></el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        label="班次1=白2=夜3"
+                        width="200"
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-input style="width: 120px" v-model="scope.row.shift"></el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        label="备注"
+                        width="200"
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-input style="width: 120px" v-model="scope.row.note"></el-input>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </template>
+
+    </el-row>
+</div>
+<script>
+
+    const vm = new Vue({
+        el: '#app',
+        data: {
+            row: {},
+            rows: {},
+            formData: [{
+                part_no: '',
+                part_name: '',
+                qty: '',
+                shift: '',
+                note: '',
+                plan_date: '',
+                date_id: ''
+            }],
+            dataItem: {
+                part_no: '',
+                part_name: '',
+                qty: '',
+                shift: '',
+                plan_date: '',
+                note: '',
+                date_id: ''
+            }
+        },
+        mounted() {
+            this.row = window.parent.app.dialogRow;
+            this.rows = window.parent.app.dialogRows;
+            window.parent.app.dialogHeight = document.documentElement.offsetHeight + "px";
+            this.getLatestPlan()
+        },
+        methods: {
+            closeDialog() {
+                window.parent.app.dialogClose();
+            },
+            add() {
+                this.formData.push(this.dataItem)
+                this.$message.success('添加产品成功')
+            },
+            getLatestPlan() {
+                axios({
+                    url: '/cleanQtyManage/getLatestPlan',
+                    method: 'get'
+                }).then(res => {
+                    this.formData = res.data.washingPlanPartsRecord
+                })
+            },
+            async sub() {
+                const [...list] = this.formData
+                list.map(item => {
+                    item.plan_date = this.row.plan_date
+                    item.date_id = this.row.id
+                    item.id =null
+                })
+                let count = 0
+                list.map(async item => {
+                    let res = await axios({
+                        url: '/cleanQtyManage/saveDailyPlan',
+                        method: 'post',
+                        params: item
+                    })
+                    if (res.data.code === 200) {
+                        this.$message.success(item.part_name+res.data.message)
+                    } else {
+                        this.$message.error(item.part_name+res.data.message)
+                    }
+                    if (count === list.length - 1) {
+                        this.closeDialog()
+                        window.parent.app.$message.success("数据上传成功")
+                    } else {
+                        count++
+                    }
+                })
+
+            },
+
+
+        }
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+    <script src="/layuiadmin/main.js"></script>
+    <style>
+        .el-tag {
+            width: 150px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="app" style="padding:20px">
+    <el-row>
+        <el-upload
+                class="upload-demo"
+                ref="upload"
+                action="/cleanQtyManage/uploadPlan"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :file-list="fileList"
+                :auto-upload="false">
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
+    </el-row>
+
+</div>
+<script>
+
+    const vm = new Vue({
+        el: '#app',
+        data: {
+            row: {},
+            rows: {},
+            fileList: []
+        },
+        mounted() {
+            this.row = window.parent.app.dialogRow;
+            this.rows = window.parent.app.dialogRows;
+            window.parent.app.dialogHeight = document.documentElement.offsetHeight + "px";
+
+        },
+        methods: {
+            closeDialog() {
+                window.parent.app.dialogClose();
+
+            },
+            submitUpload(e) {
+                this.$refs.upload.submit();
+                window.parent.console.log('upload',this.fileList)
+                // this.closeDialog()
+            },
+            handleRemove(file, fileList) {
+                console.log(file, fileList);
+            },
+            handlePreview(file) {
+                console.log(file);
+            }
+
+
+        }
+    })
+</script>
+</body>
+</html>

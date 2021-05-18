@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>统计数据</title>
+    <script src="/layuiadmin/main.js"></script>
+    <style>
+        .clearfix:before,
+        .clearfix:after {
+            display: table;
+            content: "";
+        }
+
+        .clearfix:after {
+            clear: both
+        }
+    </style>
+</head>
+<el-row id="app">
+
+    <!--    <div id="main" style="width: 1200px;height:600px;"></div>-->
+    <el-row>
+        <!--      左部为展示当日计划的零件的实时库存与水位线的差值 -->
+
+        <el-col :span="12">
+            <el-card class="box-card" style="margin: 10px">
+                <el-row slot="header" class="clearfix">
+                    <el-col :span="12" style="font-size: large">计划差值</el-col>
+                    <el-col :span="12" style="font-size: medium"> 计划日期：{{currentDate}} </el-col>
+                    <!--                    <el-button style="float: right" type="danger" @click="getDailyPlan">获取日计划</el-button>-->
+                    <!--                    <el-button style="float: right" type="success" @click="auto">自动滚动</el-button>-->
+
+                </el-row>
+                <el-row>
+                    <template>
+                        <el-table
+                                ref="filterTable"
+                                :data="planData"
+                                style="font-size: 18px"
+                                height="640"
+                                stripe
+
+                        >
+                            <el-table-column
+                                    prop="part_no"
+                                    label="零件号"
+                                    sortable
+                                    width="180"
+                            >
+                            </el-table-column>
+                            <el-table-column
+                                    prop="lowest_line"
+                                    label="最低水位"
+                                    align="center"
+                                    width="100">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="real_time_qty"
+                                    label="在清洗数量"
+                                    align="center"
+                                    width="180">
+                            </el-table-column>
+                            <el-table-column
+                                    label="差值"
+                                    align="center">
+                                <template slot-scope="scope">
+                                    <el-tag style="width: 180px"
+                                            :type="scope.row.real_time_qty-scope.row.lowest_line>0 ? 'success' : 'danger'"
+                                            disable-transitions>
+                                        {{scope.row.real_time_qty-scope.row.lowest_line>0 ?'足够':'不足'}}
+                                    </el-tag>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </template>
+                </el-row>
+                <el-row>
+                    <el-pagination
+                            @size-change="handleSizeChange1"
+                            @current-change="handleCurrentChange1"
+                            :current-page="pageNo1"
+                            :page-sizes="[10, 20, 50]"
+                            :page-size="pageSize1"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="totalPage1">
+                    </el-pagination>
+                </el-row>
+            </el-card>
+            <el-row :span="6" id="day" style="margin:10px">{{curDate|formaDate}}</el-row>
+        </el-col>
+        <!--      右部为展示所有零件实时库存 -->
+        <el-col :span="12">
+            <el-card class="box-card" style="margin: 10px">
+                <div slot="header" class="clearfix">
+                    <span style="font-size: large">实时库存</span>
+<!--                    <el-button style="float: right" type="danger" @click="getDailyPlan">获取日计划</el-button>-->
+<!--                    <el-button style="float: right" type="success" @click="auto">自动滚动</el-button>-->
+
+                </div>
+                <el-row>
+                    <template>
+                        <el-table
+                                ref="filterTable"
+                                :data="realTimeData.filter(data => !search || data.part_no.toLowerCase().includes(search.toLowerCase()))"
+                                style="font-size: 18px"
+                                height="640"
+                                stripe
+                        >
+                            <el-table-column
+                                    prop="part_no"
+                                    label="零件号"
+                                    sortable
+                                    width="200">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="total_qty"
+                                    label="在清洗数量"
+                                    align="center"
+                                    width="200">
+                            </el-table-column>
+                            <el-table-column
+                                    align="right">
+                                <template slot="header" slot-scope="scope">
+                                    <el-input
+                                            v-model="search"
+                                            size="mini"
+                                            placeholder="输入零件号搜索"></el-input>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </template>
+                </el-row>
+                <el-row>
+                    <el-pagination
+                            @size-change="handleSizeChange2"
+                            :current-page="pageNo2"
+                            layout="total"
+                            :total="totalPage2">
+                    </el-pagination>
+                </el-row>
+            </el-card>
+
+        </el-col>
+    </el-row>
+
+
+</el-row>
+
+<script>
+    const vm = new Vue({
+        el: '#app',
+        data: {
+            options: {
+                color: ['#61a0a8'],
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                grid: {   //
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                dataset: [{
+                    source: []
+                }],
+                xAxis: {
+                    type: 'category',
+                    name: '',
+                    /* boundaryGap: [0, 0.01], */
+                    splitLine: {
+                        show: false
+                    },
+                    axisLabel: {
+                        interval: 0,
+                        rotate: 30
+                    }
+
+                },
+                yAxis: {
+                    type: 'value',
+                    inverse: false,
+                    axisTick: {
+                        alignWithLabel: false,
+                    },
+                    axisLabel: {
+                        margin: 10,
+                    },
+                    //data:['药费','检查','治疗','材料','手术','其他'],	//['后续操作(3%)','完成注册(98%)','点击注册']
+                },
+                series: [
+                    {
+                        name: '', 	//'用户数',
+                        //barWidth: 10,		//设置柱子宽度
+                        type: 'bar',
+                        //data: [ 104970, 131744, 630230,104970, 131744, 630230], //[ 104970, 131744, 630230]
+                        label: {show: true, position: 'top', formatter: '最低{@lowest_line}'}, //柱形顶部显示值
+                        encode: {
+                            // 将 "amount" 列映射到 X 轴。
+                            x: 'part_no',
+                            // 将 "product" 列映射到 Y 轴。
+                            y: 'lowest_line'
+                        }
+                    },
+                    {
+                        name: 'asss', 	//'用户数',
+                        //barWidth: 10,		//设置柱子宽度
+                        type: 'bar',
+                        //data: [ 104970, 131744, 630230,104970, 131744, 630230], //[ 104970, 131744, 630230]
+                        label: {show: true, position: 'top', formatter: '实时{@real_time_qty}'}, //柱形顶部显示值
+                        encode: {
+                            // 将 "amount" 列映射到 X 轴。
+                            x: 'part_no',
+                            // 将 "product" 列映射到 Y 轴。
+                            y: 'real_time_qty'
+                        }
+                    }
+
+                ]
+            },
+            realTimeData: [],
+            planData: [],
+            originPlanData: [],
+            currentDate: '',
+            search: '',
+            pageNo1: 1,
+            pageNo2: 1,
+            pageSize1: 10,
+            pageSize2: 10,
+            totalPage1: 1,
+            totalPage2: 1,
+            curDate:new Date(),
+            currentTime:new Date().getTime()
+
+        },
+        filters:{
+            //设置一个函数来进行过滤
+            formaDate:function(value){
+                //创建一个时间日期对象
+                let padaDate = function(e){
+                    return e<10?'0'+e:e
+                }
+                let date = new Date(value);
+                let year = date.getFullYear();      //存储年
+                let month = padaDate(date.getMonth()+1);    //存储月份
+                let day = padaDate(date.getDate());         //存储日期
+                let hours = padaDate(date.getHours());      //存储时
+                let minutes = padaDate(date.getMinutes());  //存储分
+                let seconds = padaDate(date.getSeconds());  //存储秒
+                //返回格式化后的日期
+                return year+'年'+month+'月'+day+'日 '+hours+'时'+minutes+'分'+seconds+'秒';
+            }
+        },
+        async mounted() {
+            const now = new Date();
+            const year = now.getFullYear();       //年
+            const month = now.getMonth() + 1;     //月
+            const day = now.getDate();
+            let currentDate = year + "-";
+            if (month < 10)
+                currentDate += "0";
+            currentDate += month + "-";
+            if (day < 10)
+                currentDate += "0";
+            currentDate += day + "";
+            this.currentDate = currentDate
+            await this.getPlanDataByDate(currentDate)
+            this.totalPage1 = this.originPlanData.length
+            this.updatePlanData(this.pageNo1, this.pageSize1)
+            this.getRealTimeInv()
+
+            //每三分钟更新一次数据
+            this.runByTime(async () => {
+                await this.getPlanDataByDate(this.currentDate)
+                this.updatePlanData(this.pageNo1, this.pageSize1)
+                this.getRealTimeInv()
+                this.$message.success('data updated ....')
+            }, 10 * 1000)
+            this.runByTime(() => {
+                this.currentTime+=1000
+                this.curDate = new Date(this.currentTime)
+            },  1000)
+        }
+        ,
+        methods: {
+            async getPlanDataByDate(date) {
+                await axios({
+                    url: '/cleanQtyManage/getPlanData',
+                    method: 'POST',
+                    params: {date}
+                }).then(res => {
+                    let [...realTimeInv] = res.data.result
+                    let [...reqPlan] = res.data.resultPlan
+                    this.originPlanData = realTimeInv.map(item => {
+                        item.lowest_line = parseInt(reqPlan.filter(e => {
+                            return e.part_no = item.part_no
+                        })[0].req_qty / 9)
+                        return item
+                    }).sort((a, b) => {
+                        return (a['real_time_qty'] - a['lowest_line']) - (b['real_time_qty'] - b['lowest_line'])
+                    })
+                }).catch(errors => {
+                })
+            },
+            updatePlanData(pageNo, pageSize) {
+                let [...arr] = this.originPlanData
+                this.planData = arr.filter((item, index) => {
+                    return index >= (pageNo - 1) * pageSize && index < pageNo * pageSize
+                })
+            }
+            ,
+            runByTime(callback, period) {
+                let start;
+
+                function step(timestamp) {
+                    if (start === undefined)
+                        start = timestamp;
+                    const elapsed = timestamp - start;
+                    if (elapsed > period) { // 在period后停止动画
+                        start = timestamp;
+                        callback()
+                    }
+                    window.requestAnimationFrame(step);
+                }
+
+                window.requestAnimationFrame(step);
+            }
+            ,
+            rotate(arr) {
+                return arr.map((item, index) => {
+                    return arr[(index + 1) % arr.length]
+                })
+            },
+            // padaDate(v) {
+            //     return v<10?'0'+v:v
+            //     //每三分钟更新一次数据
+            //     // this.runByTime(() => {
+            //     //     this.getPlanData(this.currentDate)
+            //     // }, 3 * 60 * 1000)
+            // },
+            getDailyPlan() {
+                axios({
+                    url: '/cleanQtyManage/getDailyPlan',
+                    method: 'POST',
+                    params: {date: '2021-5-11'}
+                }).then(res => {
+                    console.log(res.data.result)
+
+                    let array = res.data.result.map(item => {
+                        return item.part_no
+                    })
+                    let ser = res.data.result.map(item => {
+                        return item.total_qty
+                    })
+                    this.options.xAxis.data = array
+                    this.options.series[0].data = ser
+
+                    this.echartsInit()
+
+                }).catch(errors => {
+                    console.log(errors)
+                })
+            },
+            getRealTimeInv() {
+                axios({
+                    url: '/cleanQtyManage/getRealTimeInv',
+                    method: 'get',
+                }).then(res => {
+                    this.realTimeData = res.data.RealTimeInv
+                    this.totalPage2 = res.data.RealTimeInv.length
+                }).catch(errors => {
+                    this.$message.error(errors)
+                })
+            },
+            handleSizeChange1(size) {
+                this.pageSize1 = size
+                this.updatePlanData(this.pageNo1, size)
+            },
+            handleSizeChange2(size) {
+            },
+            handleCurrentChange1(page) {
+                this.pageNo1 = page
+                this.updatePlanData(page, this.pageSize1)
+            }
+        }
+
+    })
+</script>
+</body>
+</html>

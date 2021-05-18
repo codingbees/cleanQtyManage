@@ -37,10 +37,16 @@ public abstract class BaseTraceBasedataPart<M extends BaseTraceBasedataPart<M>> 
 		return getStr("part_no");
 	}
 
+	/**
+	 * 零件描述
+	 */
 	public void setPartDesc(java.lang.String partDesc) {
 		set("part_desc", partDesc);
 	}
 	
+	/**
+	 * 零件描述
+	 */
 	public java.lang.String getPartDesc() {
 		return getStr("part_desc");
 	}
@@ -85,6 +91,20 @@ public abstract class BaseTraceBasedataPart<M extends BaseTraceBasedataPart<M>> 
 	 */
 	public java.lang.String getFeedingQuantity() {
 		return getStr("feeding_quantity");
+	}
+
+	/**
+	 * 是否清洗管控0=否1=是
+	 */
+	public void setIsDisplay(java.lang.Integer isDisplay) {
+		set("is_display", isDisplay);
+	}
+	
+	/**
+	 * 是否清洗管控0=否1=是
+	 */
+	public java.lang.Integer getIsDisplay() {
+		return getInt("is_display");
 	}
 
 }

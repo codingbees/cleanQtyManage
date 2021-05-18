@@ -93,4 +93,18 @@ public abstract class BaseTraceWorkflowCleanbinding<M extends BaseTraceWorkflowC
 		return get("create_time");
 	}
 
+	/**
+	 * 盒子状态：0=已清空，1=已上料待洗，2=已洗待用，3=已用
+	 */
+	public void setCleanBoxStatus(java.lang.Integer cleanBoxStatus) {
+		set("clean_box_status", cleanBoxStatus);
+	}
+	
+	/**
+	 * 盒子状态：0=已清空，1=已上料待洗，2=已洗待用，3=已用
+	 */
+	public java.lang.Integer getCleanBoxStatus() {
+		return getInt("clean_box_status");
+	}
+
 }

@@ -16,6 +16,7 @@ import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 public class _MappingKit {
 	
 	public static void mapping(ActiveRecordPlugin arp) {
+		arp.addMapping("data_app_version", "id", DataAppVersion.class);
 		arp.addMapping("data_button", "id", DataButton.class);
 		arp.addMapping("data_field", "id", DataField.class);
 		arp.addMapping("data_object", "id", DataObject.class);
@@ -43,6 +44,8 @@ public class _MappingKit {
 		arp.addMapping("trace_workflow_material_scrap_detail", "id", TraceWorkflowMaterialScrapDetail.class);
 		arp.addMapping("user", "id", User.class);
 		arp.addMapping("user_role", "id", UserRole.class);
+		arp.addMapping("washing_plan_date", "id", WashingPlanDate.class);
+		arp.addMapping("washing_plan_parts", "id", WashingPlanParts.class);
 		arp.addMapping("yw_test", "id", YwTest.class);
 		arp.addMapping("yw_test_son", "id", YwTestSon.class);
 	}

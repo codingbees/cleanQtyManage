@@ -1,3 +1,13 @@
+Table: data_app_version
+---------+--------------+------+-----+---------+---------
+ Field   | Type         | Null | Key | Default | Remarks 
+---------+--------------+------+-----+---------+---------
+ id      | INT(10)      | NO   | PRI |         |         
+ version | VARCHAR(255) | YES  |     |         | 版本号     
+ remark  | VARCHAR(255) | YES  |     |         | 说明      
+ url     | VARCHAR(255) | YES  |     |         | 下载地址    
+---------+--------------+------+-----+---------+---------
+
 Table: data_button
 ----------------+--------------+------+-----+---------+---------
  Field          | Type         | Null | Key | Default | Remarks 
@@ -182,10 +192,11 @@ Table: trace_basedata_part
 ----------------------+--------------+------+-----+---------+---------
  id                   | INT(10)      | NO   | PRI |         | ID      
  part_no              | VARCHAR(255) | YES  |     |         | 零部件号    
- part_desc            | VARCHAR(255) | YES  |     |         |         
+ part_desc            | VARCHAR(255) | YES  |     |         | 零件描述    
  product_id           | INT(10)      | YES  |     |         | 产品编号    
  consumption_quantity | VARCHAR(11)  | YES  |     |         | 消耗数量    
  feeding_quantity     | VARCHAR(11)  | YES  |     |         | 清洗数量    
+ is_display           | INT(10)      | YES  |     |         | 是否清洗管控0=否1=是
 ----------------------+--------------+------+-----+---------+---------
 
 Table: trace_basedata_product
@@ -265,16 +276,17 @@ Table: trace_workflow_assemble_detail
 -------------+--------------+------+-----+---------+---------
 
 Table: trace_workflow_cleanbinding
---------------+--------------+------+-----+---------+---------
- Field        | Type         | Null | Key | Default | Remarks 
---------------+--------------+------+-----+---------+---------
- id           | INT(10)      | NO   | PRI |         | ID      
- part_no      | VARCHAR(255) | YES  |     |         | 零件号     
- batch_no     | VARCHAR(255) | YES  |     |         | 批次号     
- quantity     | VARCHAR(255) | YES  |     |         | 数量      
- clean_box_no | VARCHAR(255) | YES  |     |         | 清洗框二维码  
- create_time  | DATETIME(19) | YES  |     |         | 清洗绑定时间  
---------------+--------------+------+-----+---------+---------
+------------------+--------------+------+-----+---------+---------
+ Field            | Type         | Null | Key | Default | Remarks 
+------------------+--------------+------+-----+---------+---------
+ id               | INT(10)      | NO   | PRI |         | ID      
+ part_no          | VARCHAR(255) | YES  |     |         | 零件号     
+ batch_no         | VARCHAR(255) | YES  |     |         | 批次号     
+ quantity         | VARCHAR(255) | YES  |     |         | 数量      
+ clean_box_no     | VARCHAR(255) | YES  |     |         | 清洗框二维码  
+ create_time      | DATETIME(19) | YES  |     |         | 清洗绑定时间  
+ clean_box_status | INT(10)      | YES  |     |         | 盒子状态：0=已清空，1=已上料待洗，2=已洗待用，3=已用
+------------------+--------------+------+-----+---------+---------
 
 Table: trace_workflow_customer_qrcode_history
 ---------------+--------------+------+-----+---------+---------
@@ -362,6 +374,30 @@ Table: user_role
  user_id | INT(10) | NO   |     |         | 用户ID    
  role_id | INT(10) | NO   |     |         | 角色ID    
 ---------+---------+------+-----+---------+---------
+
+Table: washing_plan_date
+-----------+--------------+------+-----+---------+---------
+ Field     | Type         | Null | Key | Default | Remarks 
+-----------+--------------+------+-----+---------+---------
+ id        | INT(10)      | NO   | PRI |         |         
+ plan_date | DATE(10)     | YES  |     |         | 计划日期    
+ note      | VARCHAR(255) | YES  |     |         | 备注      
+-----------+--------------+------+-----+---------+---------
+
+Table: washing_plan_parts
+------------+--------------+------+-----+---------+---------
+ Field      | Type         | Null | Key | Default | Remarks 
+------------+--------------+------+-----+---------+---------
+ id         | INT(10)      | NO   | PRI |         | ID      
+ part_no    | VARCHAR(50)  | YES  |     |         | 产品型号    
+ part_name  | VARCHAR(50)  | YES  |     |         | 产品名称    
+ product_id | INT(10)      | YES  |     |         | 产品ID    
+ qty        | INT(10)      | YES  |     |         | 数量      
+ shift      | INT(10)      | YES  |     |         | 1=白班，2=夜班
+ plan_date  | DATE(10)     | YES  |     |         | 计划日期    
+ note       | VARCHAR(255) | YES  |     |         | 备注      
+ date_id    | INT(10)      | YES  |     |         | 日期id    
+------------+--------------+------+-----+---------+---------
 
 Table: yw_test
 ------------------+---------------+------+-----+-------------------+---------
